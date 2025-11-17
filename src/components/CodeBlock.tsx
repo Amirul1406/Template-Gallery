@@ -27,7 +27,7 @@ export default function CodeBlock({ codes }: CodeBlockProps) {
         <div className="flex">
           {codes.map((code, index) => (
             <button
-              key={index}
+              key={`${code.language}-${index}-${code.label}`}
               onClick={() => setActiveTab(index)}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === index

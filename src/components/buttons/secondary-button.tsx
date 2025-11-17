@@ -64,8 +64,27 @@ export const secondaryButton: Component = {
     { language: 'vue', code: VueCode, label: 'Vue' },
     { language: 'html', code: HtmlCode, label: 'HTML/CSS' },
   ],
+  explanation: `<strong>Fill Animation on Hover:</strong>
+
+The secondary button uses a border-to-fill animation technique where the background fills on hover.
+
+<strong>How It Works:</strong>
+
+1. <strong>Base State:</strong> Transparent background (\`bg-dark-surface\`) with a colored border (\`border-2 border-blue-600\`) and matching text color (\`text-blue-600\`).
+
+2. <strong>Hover State:</strong> On hover, the button fills with the border color:
+   - Background changes to blue (\`hover:bg-blue-600\`)
+   - Text color changes to white (\`hover:text-white\`)
+   - Border remains visible but blends with background
+
+3. <strong>Transition:</strong> \`transition-all duration-200\` animates all properties smoothly over 200ms.
+
+<strong>Visual Effect:</strong>
+
+The button appears to "fill in" from outline to solid, creating a satisfying visual feedback that clearly indicates interactivity.`,
   author: 'UI Library',
   createdAt: '2024-01-01',
 };
+
 
 

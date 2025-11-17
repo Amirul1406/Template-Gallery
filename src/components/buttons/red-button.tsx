@@ -65,6 +65,24 @@ export const redButton: Component = {
     { language: 'vue', code: VueCode, label: 'Vue' },
     { language: 'html', code: HtmlCode, label: 'HTML/CSS' },
   ],
+  explanation: `<strong>Hover Animation:</strong>
+
+Similar to the primary button, but uses red color scheme for emphasis on destructive or important actions.
+
+<strong>How It Works:</strong>
+
+1. <strong>Base State:</strong> Red background (\`bg-red-600\`) with shadow (\`shadow-lg\`).
+
+2. <strong>Hover State:</strong> Darker red (\`hover:bg-red-700\`) with enhanced shadow (\`hover:shadow-xl\`).
+
+3. <strong>Transition:</strong> Smooth color transition over 200ms using \`transition-colors duration-200\`.
+
+<strong>Color Psychology:</strong>
+
+Red buttons are typically used for:
+- Destructive actions (delete, remove)
+- Important calls-to-action
+- Error states or warnings`,
   author: 'UI Library',
   createdAt: '2024-01-08',
 };

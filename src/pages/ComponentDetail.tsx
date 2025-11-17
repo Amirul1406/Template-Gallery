@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import CodeBlock from '../components/CodeBlock';
 import DownloadSection from '../components/DownloadSection';
+import ExplanationSection from '../components/ExplanationSection';
 import { components } from '../components';
 
 export default function ComponentDetail() {
@@ -66,6 +67,11 @@ export default function ComponentDetail() {
         <div className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Code</h2>
           <CodeBlock codes={component.codes} />
+        </div>
+
+        {/* Explanation Section */}
+        <div className="mb-8">
+          <ExplanationSection component={component} />
         </div>
 
         {/* Download Section */}

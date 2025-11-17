@@ -68,8 +68,36 @@ export const spinner: Component = {
     { language: 'vue', code: VueCode, label: 'Vue' },
     { language: 'html', code: HtmlCode, label: 'HTML/CSS' },
   ],
+  explanation: `<strong>Spinning Animation:</strong>
+
+The spinner uses CSS keyframe animations to create a continuous rotation effect.
+
+<strong>How It Works:</strong>
+
+1. <strong>Circle Structure:</strong> A circular div with a thick border (\`border-4\`) where the top border is transparent (\`border-t-transparent\`), creating a partial circle appearance.
+
+2. <strong>Animation:</strong> Uses Tailwind's \`animate-spin\` utility which applies:
+   - \`@keyframes spin\`: Rotates from 0deg to 360deg
+   - \`animation: spin 1s linear infinite\`: Continuous rotation
+
+3. <strong>Visual Effect:</strong> The transparent top border creates the illusion of a spinning arc, giving visual feedback that something is loading.
+
+<strong>CSS Keyframes:</strong>
+
+\`\`\`css
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+\`\`\`
+
+<strong>Properties:</strong>
+
+- \`linear\`: Constant speed rotation
+- \`infinite\`: Continuous loop
+- \`1s\`: One full rotation per second`,
   author: 'UI Library',
   createdAt: '2024-01-05',
 };
+
 
 

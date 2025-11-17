@@ -65,8 +65,28 @@ export const primaryButton: Component = {
     { language: 'vue', code: VueCode, label: 'Vue' },
     { language: 'html', code: HtmlCode, label: 'HTML/CSS' },
   ],
+  explanation: `<strong>Hover Animation:</strong>
+
+The button uses CSS transitions to create smooth color and shadow changes on hover.
+
+<strong>How It Works:</strong>
+
+1. <strong>Base State:</strong> The button has a blue background (\`bg-blue-600\`) with a shadow (\`shadow-lg\`).
+
+2. <strong>Hover State:</strong> On hover, two properties animate:
+   - Background color changes to darker blue (\`hover:bg-blue-700\`)
+   - Shadow increases (\`hover:shadow-xl\`) for depth effect
+
+3. <strong>Transition:</strong> The \`transition-colors duration-200\` class ensures smooth color changes over 200ms.
+
+<strong>CSS Properties:</strong>
+
+- \`transition-colors\`: Animates color-related properties
+- \`duration-200\`: Sets transition duration to 200ms
+- \`shadow-lg\` / \`shadow-xl\`: Creates layered shadow effects`,
   author: 'UI Library',
   createdAt: '2024-01-01',
 };
+
 
 

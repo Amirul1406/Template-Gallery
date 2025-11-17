@@ -76,3 +76,4 @@ export const components = [
 ✅ Gallery automatically discovers new components  
 
 
+

@@ -90,8 +90,40 @@ export const dotsLoader: Component = {
     { language: 'vue', code: VueCode, label: 'Vue' },
     { language: 'html', code: HtmlCode, label: 'HTML/CSS' },
   ],
+  explanation: `<strong>Staggered Bounce Animation:</strong>
+
+The dots loader uses CSS keyframe animations with staggered delays to create a wave-like bouncing effect.
+
+<strong>How It Works:</strong>
+
+1. <strong>Bounce Animation:</strong> Each dot uses the \`animate-bounce\` class which applies a scale animation:
+   - At 0%, 80%, and 100%: \`transform: scale(0)\` (invisible)
+   - At 40%: \`transform: scale(1)\` (fully visible)
+
+2. <strong>Animation Delay:</strong> Each dot has a different delay to create a wave effect:
+   - First dot: 0ms delay
+   - Second dot: 150ms delay
+   - Third dot: 300ms delay
+
+3. <strong>Visual Effect:</strong> The staggered delays create a cascading bounce effect, making it appear as if the dots are bouncing in sequence.
+
+<strong>CSS Keyframes:</strong>
+
+\`\`\`css
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+\`\`\`
+
+<strong>Animation Properties:</strong>
+
+- Duration: 1.4s per cycle
+- Timing: ease-in-out for smooth acceleration/deceleration
+- Infinite: Continuous loop`,
   author: 'UI Library',
   createdAt: '2024-01-05',
 };
+
 
 

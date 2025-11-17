@@ -103,8 +103,33 @@ export const basicCard: Component = {
     { language: 'vue', code: VueCode, label: 'Vue' },
     { language: 'html', code: HtmlCode, label: 'HTML/CSS' },
   ],
+  explanation: `<strong>Card Structure:</strong>
+
+A simple card component with clean styling and hover effects on interactive elements.
+
+<strong>How It Works:</strong>
+
+1. <strong>Layout:</strong> Uses flexbox-like structure with:
+   - Container: \`bg-dark-surface\` with border and rounded corners
+   - Padding: \`p-6\` for internal spacing
+   - Shadow: \`shadow-lg\` for depth
+
+2. <strong>Content Hierarchy:</strong>
+   - Title: Bold heading (\`text-xl font-bold\`)
+   - Description: Muted text (\`text-gray-400\`)
+   - Action button: Primary button with hover effect
+
+3. <strong>Button Hover:</strong> The button uses \`transition-colors\` for smooth color change on hover.
+
+<strong>Design Principles:</strong>
+
+- Clear visual hierarchy with typography
+- Consistent spacing using Tailwind utilities
+- Subtle shadows for depth
+- Hover states for interactivity feedback`,
   author: 'UI Library',
   createdAt: '2024-01-02',
 };
+
 
 

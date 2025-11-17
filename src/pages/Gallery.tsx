@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ComponentCard from '../components/ComponentCard';
 import { components } from '../components';
 
 export default function Gallery() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
 
   const categories = useMemo(() => {
     const cats = new Set(components.map((c) => c.category));
@@ -34,17 +36,8 @@ export default function Gallery() {
           </p>
         </div>
 
-        {/* Search and Filters */}
-        <div className="mb-8 space-y-4">
-          <input
-            type="text"
-            placeholder="Search components..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full max-w-md px-4 py-2 bg-dark-surface border border-dark-border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-          />
-
-          {/* Category Filter */}
+        {/* Category Filter */}
+        <div className="mb-8">
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
               <button

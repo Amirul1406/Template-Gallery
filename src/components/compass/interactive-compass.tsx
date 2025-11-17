@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Component } from '../../types/component';
 import { alphaToHeadingDeg } from '../../utils/heading';
 import './compass.css';
@@ -235,6 +235,47 @@ export const interactiveCompass: Component = {
     { language: 'vue', code: VueCode, label: 'Vue' },
     { language: 'html', code: HtmlCode, label: 'HTML/CSS' },
   ],
+  images: [
+    {
+      path: '/assets/compass/compass.png',
+      name: 'compass.png',
+      description: 'Compass image asset used in the component',
+    },
+  ],
+  explanation: `<strong>Compass Rotation Mechanism:</strong>
+
+The compass uses a horizontal scrolling technique to create the illusion of rotation by translating multiple compass images.
+
+<strong>How It Works:</strong>
+
+1. <strong>Image Duplication:</strong> Four identical compass images are placed side-by-side in a flex container to create a seamless loop.
+
+2. <strong>Transform Calculation:</strong> The compass direction is converted from radians to degrees using \`alphaToHeadingDeg()\`, then mapped to a horizontal translation value:
+   - Base position: \`308%\` (starting point)
+   - Range: \`200%\` per 360 degrees
+   - Formula: \`basePercent + (headingDeg / 360) * percentPer360\`
+
+3. <strong>Translation Effect:</strong> The wrapper uses \`transform: translateX(-value%)\` to shift the compass images horizontally, creating the rotation effect.
+
+4. <strong>Auto-Rotation Demo:</strong> In the preview, a \`useEffect\` hook increments the direction by 0.02 radians every 50ms, creating smooth auto-rotation.
+
+<strong>Key Functions:</strong>
+
+- <strong>\`alphaToHeadingDeg()\`:</strong> Converts camera alpha angle (radians) to compass heading (degrees) with a north offset adjustment.
+
+- <strong>\`useEffect\`:</strong> Watches the \`direction\` prop and updates the transform style whenever it changes.
+
+<strong>CSS Positioning:</strong>
+
+- Container uses absolute positioning with \`overflow: hidden\` to clip the compass images
+- Wrapper uses flexbox to arrange images horizontally
+- Each image is 600px wide to ensure smooth scrolling
+
+<strong>Responsive Behavior:</strong>
+
+The compass scales down on smaller screens:
+- ≤700px: scale 0.9
+- ≤500px: scale 0.7`,
   author: 'UI Library',
   createdAt: '2024-01-06',
 };

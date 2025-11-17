@@ -5,12 +5,15 @@
 import { primaryButton } from './buttons/primary-button';
 import { secondaryButton } from './buttons/secondary-button';
 import { redButton } from './buttons/red-button';
+import { slideUpRevealButton } from './buttons/slide-up-reveal-button';
 
 // Cards
 import { basicCard } from './cards/basic-card';
 
 // Menus
 import { dropdownMenu } from './menus/dropdown-menu';
+import { bottomMenu } from './menus/bottom-menu';
+import { macosDock } from './menus/macos-dock';
 
 // Sliders
 import { rangeSlider } from './sliders/range-slider';
@@ -30,8 +33,11 @@ export const components = [
   primaryButton,
   secondaryButton,
   redButton,
+  slideUpRevealButton,
   basicCard,
   dropdownMenu,
+  bottomMenu,
+  macosDock,
   rangeSlider,
   spinner,
   skeletonLoader,

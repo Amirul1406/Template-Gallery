@@ -161,6 +161,35 @@ export const rangeSlider: Component = {
     { language: 'vue', code: VueCode, label: 'Vue' },
     { language: 'html', code: HtmlCode, label: 'HTML/CSS' },
   ],
+  explanation: `<strong>Dynamic Gradient Slider:</strong>
+
+The range slider uses a dynamic linear gradient that updates based on the slider value to provide visual feedback.
+
+<strong>How It Works:</strong>
+
+1. <strong>State Management:</strong> Uses \`useState\` to track the slider value (0-100).
+
+2. <strong>Dynamic Background:</strong> The slider track uses an inline style with a linear gradient:
+   - Formula: \`linear-gradient(to right, #2563eb 0%, #2563eb \${value}%, #262626 \${value}%, #262626 100%)\`
+   - Blue portion represents filled/progress
+   - Dark portion represents remaining
+
+3. <strong>Value Update:</strong> \`onChange\` handler updates state when user drags the slider thumb.
+
+4. <strong>Visual Feedback:</strong> The gradient dynamically adjusts as the value changes, providing immediate visual feedback.
+
+<strong>Custom Styling:</strong>
+
+- \`appearance-none\`: Removes default browser styling
+- Custom thumb styling for webkit and moz browsers
+- Rounded track and thumb for modern appearance
+
+<strong>Key Features:</strong>
+
+- Real-time value display
+- Smooth gradient transitions
+- Accessible range input
+- Cross-browser compatibility`,
   author: 'UI Library',
   createdAt: '2024-01-04',
 };

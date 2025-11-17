@@ -98,8 +98,40 @@ export const skeletonLoader: Component = {
     { language: 'vue', code: VueCode, label: 'Vue' },
     { language: 'html', code: HtmlCode, label: 'HTML/CSS' },
   ],
+  explanation: `<strong>Pulse Animation:</strong>
+
+The skeleton loader uses a pulsing opacity animation to create a shimmer effect that indicates content is loading.
+
+<strong>How It Works:</strong>
+
+1. <strong>Pulse Animation:</strong> Uses Tailwind's \`animate-pulse\` utility which applies:
+   - Opacity transitions from 1 → 0.5 → 1
+   - Duration: 2s with cubic-bezier easing
+   - Infinite loop
+
+2. <strong>Structure Mimicking:</strong> The skeleton elements mimic the structure of actual content:
+   - Lines of varying widths (full, 5/6, 4/6) represent text
+   - Box element represents images or larger content blocks
+
+3. <strong>Visual Effect:</strong> The pulsing opacity creates a "breathing" effect that draws attention without being distracting.
+
+<strong>CSS Keyframes:</strong>
+
+\`\`\`css
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+\`\`\`
+
+<strong>Benefits:</strong>
+
+- Reduces perceived load time
+- Maintains layout structure
+- Provides visual feedback that content is loading`,
   author: 'UI Library',
   createdAt: '2024-01-05',
 };
+
 
 

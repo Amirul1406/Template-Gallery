@@ -133,6 +133,33 @@ export const fullscreenLoading: Component = {
     { language: 'vue', code: VueCode, label: 'Vue' },
     { language: 'html', code: HtmlCode, label: 'HTML/CSS' },
   ],
+  explanation: `<strong>Progress Bar Animation:</strong>
+
+The loading gradient uses dynamic width changes combined with CSS transitions to create a smooth progress animation.
+
+<strong>How It Works:</strong>
+
+1. <strong>Progress Tracking:</strong> Uses React state (\`useState\`) to track progress from 0-100%.
+
+2. <strong>Dynamic Width:</strong> The progress bar's width is set dynamically using inline styles:
+   - \`style={{ width: \`\${progress}%\` }}\`
+   - Updates smoothly as progress changes
+
+3. <strong>Gradient Background:</strong> Uses CSS gradient (\`bg-gradient-to-r from-[#0077ff] to-[#33c2ff]\`) for visual appeal.
+
+4. <strong>Transition:</strong> \`transition-all duration-300 ease-in-out\` ensures smooth width changes.
+
+5. <strong>Auto-Increment:</strong> In the preview, \`useEffect\` with \`setInterval\` increments progress every 50ms for demonstration.
+
+<strong>Visual Effects:</strong>
+
+- Glowing shadow: \`shadow-[0_0_40px_5px_rgba(255,255,255,0.78)]\` creates a neon glow
+- Rounded corners: \`rounded-[20px]\` for modern appearance
+- White track with blue gradient fill for high contrast
+
+<strong>State Management:</strong>
+
+The component accepts a \`progress\` prop (0-100) and updates the bar width accordingly. The transition property ensures smooth animations between value changes.`,
   author: 'UI Library',
   createdAt: '2024-01-07',
 };

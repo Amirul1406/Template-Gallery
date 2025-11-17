@@ -6,6 +6,12 @@ export interface CodeSnippet {
   label: string;
 }
 
+export interface ImageAsset {
+  path: string;
+  name: string;
+  description?: string;
+}
+
 export interface Component {
   id: string;
   title: string;
@@ -14,6 +20,8 @@ export interface Component {
   tags: string[];
   preview: React.ComponentType<any>;
   codes: CodeSnippet[];
+  images?: ImageAsset[];
+  explanation?: string;
   author?: string;
   createdAt?: string;
 }

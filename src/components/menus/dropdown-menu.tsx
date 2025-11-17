@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Component } from '../../types/component';
 
 const Preview = () => {
@@ -160,8 +160,35 @@ export const dropdownMenu: Component = {
     { language: 'vue', code: VueCode, label: 'Vue' },
     { language: 'html', code: HtmlCode, label: 'HTML/CSS' },
   ],
+  explanation: `<strong>Dropdown Toggle Mechanism:</strong>
+
+The dropdown menu uses conditional rendering combined with CSS transforms to create a smooth reveal animation.
+
+<strong>How It Works:</strong>
+
+1. <strong>State Management:</strong> Uses \`useState\` to track \`isOpen\` state, controlling menu visibility.
+
+2. <strong>Chevron Rotation:</strong> The chevron icon rotates 180 degrees when opened using:
+   - Conditional class: \`\${isOpen ? 'rotate-180' : ''}\`
+   - CSS transition: \`transition-transform\`
+   - Transform: \`rotate(180deg)\`
+
+3. <strong>Menu Positioning:</strong> The dropdown menu uses absolute positioning:
+   - \`absolute top-full mt-2\`: Positions below the button with margin
+   - \`w-48\`: Fixed width of 12rem (192px)
+
+4. <strong>Conditional Rendering:</strong> Menu only renders when \`isOpen\` is true, creating instant show/hide effect.
+
+5. <strong>Hover Effects:</strong> Menu items have hover states with background color transitions for better UX.
+
+<strong>Key Features:</strong>
+
+- Shadow effect (\`shadow-lg\`) for depth
+- Overflow hidden for clean rounded corners
+- Smooth transitions on all interactive elements`,
   author: 'UI Library',
   createdAt: '2024-01-03',
 };
+
 
 
