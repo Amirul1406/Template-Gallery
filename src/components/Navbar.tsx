@@ -116,6 +116,22 @@ export default function Navbar() {
             >
               Colors
             </Link>
+            <Link
+              to="/layouts"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/layouts' ? 'text-white' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              Layouts
+            </Link>
+            <Link
+              to="/responsive"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/responsive' ? 'text-white' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              Responsive
+            </Link>
             
             {/* Search Toggle */}
             {!isSearchOpen ? (

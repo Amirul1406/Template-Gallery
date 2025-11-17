@@ -3,6 +3,8 @@ import Navbar from './components/Navbar';
 import Gallery from './pages/Gallery';
 import ComponentDetail from './pages/ComponentDetail';
 import ColorPalette from './pages/ColorPalette';
+import LayoutGenerator from './pages/LayoutGenerator';
+import ResponsiveTester from './pages/ResponsiveTester';
 
 function App() {
   return (
@@ -12,6 +14,8 @@ function App() {
         <Route path="/" element={<Gallery />} />
         <Route path="/component/:id" element={<ComponentDetail />} />
         <Route path="/colors" element={<ColorPalette />} />
+        <Route path="/layouts" element={<LayoutGenerator />} />
+        <Route path="/responsive" element={<ResponsiveTester />} />
       </Routes>
     </div>
   );
