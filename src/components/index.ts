@@ -27,6 +27,9 @@ import { fullscreenLoading } from './loaders/fullscreen-loading';
 // Compass
 import { interactiveCompass } from './compass/interactive-compass';
 
+// Scroll
+import { horizontalScroller } from './scroll/horizontal-scroller';
+
 // Export all components as an array
 // The gallery will automatically pick up new components added here
 export const components = [
@@ -44,5 +47,6 @@ export const components = [
   dotsLoader,
   fullscreenLoading,
   interactiveCompass,
+  horizontalScroller,
 ];
 

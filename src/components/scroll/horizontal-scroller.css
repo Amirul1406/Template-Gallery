@@ -1,0 +1,66 @@
+.horizontal-scroller-preview-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  max-height: 500px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.horizontal-scroller-preview-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.horizontal-scroller-preview-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.horizontal-scroller-preview-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.horizontal-scroller-container {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  z-index: 1;
+}
+
+.horizontal-scroller-content {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+  width: max-content;
+}
+
+.horizontal-scroller-item {
+  min-width: 280px;
+  width: 280px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  margin-right: 16px;
+  border-radius: 8px;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.horizontal-scroller-spacer {
+  height: 800px;
+  width: 100%;
+}
+

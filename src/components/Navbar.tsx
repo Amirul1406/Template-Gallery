@@ -1,8 +1,9 @@
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useLocation } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
 export default function Navbar() {
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialSearch = searchParams.get('search') || '';
   const [isSearchOpen, setIsSearchOpen] = useState(!!initialSearch);
@@ -98,7 +99,24 @@ export default function Navbar() {
             UI Library
           </Link>
           
-          <div className="flex items-center gap-6">            
+          <div className="flex items-center gap-6">
+            <Link
+              to="/"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/' ? 'text-white' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              Components
+            </Link>
+            <Link
+              to="/colors"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/colors' ? 'text-white' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              Colors
+            </Link>
+            
             {/* Search Toggle */}
             {!isSearchOpen ? (
               <button 
