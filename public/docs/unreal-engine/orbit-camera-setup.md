@@ -132,6 +132,8 @@ Content/
 
 ## Step 4: Create Orbit Camera System (20 minutes)
 
+> ⚠️ **Important:** Everywhere you see `YourProject`, `YOURPROJECT_API`, or `YourProject/Source/...`, replace it with your actual project name (e.g., `PRACTISEV2`). Unreal will not compile if the filenames and API macro don’t match your project.
+
 ### Part A: Create C++ Orbit Camera Class (10 min)
 
 1. In Unreal Editor: **File** → **New C++ Class...**
@@ -142,13 +144,14 @@ Content/
 6. Close Visual Studio (keep Unreal Editor open)
 
 7. Copy the Orbit Camera code into your new files:
-   - Copy content from your existing `OrbitCameraActor.h` and `.cpp` files
-   - Or use the code from your previous project
+   - See **[Code Download Section](#-code-download)** below for complete code files
+   - Copy content from `OrbitCameraActor.h` and `.cpp` files
    - Paste into: `YourProject/Source/YourProject/Public/OrbitCameraActor.h`
    - Paste into: `YourProject/Source/YourProject/Private/OrbitCameraActor.cpp`
 
 8. **Important:** Update the API macro:
-   - In `OrbitCameraActor.h`, change `MYPROJECT_API` to `YOURPROJECT_API` (match your project name)
+   - In `OrbitCameraActor.h`, change `PRACTISEV2_API` to `YOURPROJECT_API` (match your project name)
+   - Replace all instances of `PRACTISEV2_API` with your project's API macro
 
 9. Right-click `YourProject.uproject` → **Generate Visual Studio project files**
 10. Open `YourProject.sln` in Visual Studio
@@ -305,12 +308,32 @@ Content/
 
 1. In level, drag `BP_OrbitCamera` from `Content/Core/Cameras/` into level
 2. Select `BP_OrbitCamera` in **World Outliner** (top left)
-3. In **Details** panel → **Orbit** section:
-   - **Orbit Center**: `(0, 0, 0)` or wherever your showpiece is
-   - **Min Zoom Distance**: `100`
-   - **Max Zoom Distance**: `2000`
+3. In **Details** panel, expand these sections:
+   
+   **Orbit** section (should be visible):
+   - **Orbit Center**: `(0, 0, 0)` or wherever your showpiece is (set X, Y, Z values)
+   - **Height Offset**: `0.0` (adjust to raise/lower the camera's target point - positive = higher)
    - **Orbit Speed**: `100`
+   - **Min Pitch**: `-80` (how far down the camera can tilt)
+   - **Max Pitch**: `-5` (raise this toward `0` if you want to see more sky)
+   
+   **Expand "Camera|Orbit|Initial Position" section** (click the arrow to expand):
+   - **Initial Yaw**: `0` (0° = front, 90° = right, 180° = back, 270°/-90° = left)
+   - **Initial Pitch**: `-30` (negative = tilt down, positive = tilt up, default: -30° tilted down)
+   
+   **Expand "Camera|Zoom" section** (click the arrow to expand):
+   - **Zoom Speed**: `100`
+   - **Min Zoom Distance**: `100` (closest camera can get)
+   - **Max Zoom Distance**: `2000` (farthest camera can go)
+   - **Zoom Interpolation Speed**: `5`
+   
+   **Expand "Camera|Pan" section** (click the arrow to expand):
    - **Pan Speed**: `5`
+
+**💡 Tip:** To set the initial camera distance from center:
+- Select the `SpringArm` component in the Components list
+- Set **Target Arm Length** (e.g., `800`, `1200`, etc.)
+- This is the starting distance from the orbit center
 
 ✅ **Part B Done!** Camera placed and configured
 
@@ -362,6 +385,773 @@ You now have a fully working Orbit Camera system with Open World level!
 3. Learn Materials - create materials for showpieces
 4. Learn Lighting - set up proper lighting
 5. Learn UI - create HUD to display info
+
+---
+
+---
+
+## 📥 Code Download
+
+Complete source code for the Orbit Camera system. Copy these files directly into your project.
+
+### 📄 OrbitCameraActor.h
+
+Place this file in: `YourProject/Source/YourProject/Public/OrbitCameraActor.h`
+
+**⚠️ Important:** Replace `PRACTISEV2_API` with `YOURPROJECT_API` (match your project name)
+
+<details>
+<summary>Click to expand OrbitCameraActor.h code</summary>
+
+```cpp
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Pawn.h"
+#include "OrbitCameraActor.generated.h"
+
+class USceneComponent;
+class USpringArmComponent;
+class UCameraComponent;
+class UInputMappingContext;
+class UInputAction;
+struct FInputActionValue;
+
+UCLASS()
+class PRACTISEV2_API AOrbitCameraActor : public APawn
+{
+    GENERATED_BODY()
+
+public:
+    AOrbitCameraActor();
+
+    virtual void Tick(float DeltaSeconds) override;
+    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+protected:
+    virtual void BeginPlay() override;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    USceneComponent* OrbitCenterComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    USpringArmComponent* SpringArm;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    UCameraComponent* Camera;
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    UInputMappingContext* OrbitMappingContext;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    UInputAction* OrbitMoveAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    UInputAction* PanMoveAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    UInputAction* ZoomAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit")
+    FVector OrbitCenter = FVector::ZeroVector;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit", meta = (ToolTip = "Height offset for orbit center. Positive values = higher, negative = lower. Adds to Orbit Center's Z position."))
+    float HeightOffset = 0.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit")
+    float OrbitSpeed = 100.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit")
+    float MinPitch = -80.0f;
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit")
+   float MaxPitch = -5.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Zoom")
+    float ZoomSpeed = 100.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Zoom")
+    float MinZoomDistance = 100.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Zoom")
+    float MaxZoomDistance = 10000.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Zoom")
+    float ZoomInterpolationSpeed = 5.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Pan")
+    float PanSpeed = 5.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Lag")
+    float CameraLagSpeed = 10.0f;
+
+    // Initial rotation angles (sets starting camera position)
+    // Set these to 0.0 to use the camera's current rotation in the level
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit|Initial Position", meta = (ToolTip = "Initial horizontal rotation (0 = front, 90 = right, 180 = back, 270 = left). Set to 0 to use camera's level rotation."))
+    float InitialYaw = 0.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit|Initial Position", meta = (ToolTip = "Initial vertical rotation (negative = down, positive = up, 0 = level). Set to 0 to use camera's level rotation. Default: -30 (tilted down 30°)."))
+    float InitialPitch = -30.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Touch")
+    float TouchOrbitSensitivity = 1.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Touch")
+    float TouchPanSensitivity = 2.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Touch")
+    float TouchZoomSensitivity = 5.0f;
+
+    UFUNCTION(BlueprintCallable, Category = "Camera")
+    void UpdateCameraTransform(const FVector& NewOrbitCenterLocation, const FRotator& NewSpringArmRotation, float NewArmLength, bool bApplyImmediately = false);
+
+private:
+    float CurrentPitch = 0.0f;
+    float CurrentYaw = 0.0f;
+
+    float TargetArmLength = 300.0f;
+    float CurrentArmLength = 300.0f;
+    FTransform StartingTransform;
+    FRotator StartingRotation;
+    FVector StartingLocation;
+
+    struct FTouchData
+    {
+        bool bIsPressed = false;
+        FVector2D Position = FVector2D::ZeroVector;
+        FVector2D LastPosition = FVector2D::ZeroVector;
+    };
+
+    FTouchData TouchData[5];
+    int32 ActiveTouchCount = 0;
+    bool bIsTouchActive = false;
+    bool bIsMouseActive = false;
+    float LastInputTime = 0.0f;
+    float InputModeSwitchDelay = 0.5f;
+
+    void HandleOrbitMove(const FInputActionValue& Value);
+    void HandlePanMove(const FInputActionValue& Value);
+    void HandleZoom(const FInputActionValue& Value);
+
+    void OnTouchPressed(ETouchIndex::Type FingerIndex, FVector Location);
+    void OnTouchReleased(ETouchIndex::Type FingerIndex, FVector Location);
+    void OnTouchMoved(ETouchIndex::Type FingerIndex, FVector Location);
+
+    void ProcessTouchInput();
+    void HandleSingleTouch();
+    void HandleDualTouch();
+    void HandleMultiTouch();
+    float CalculateAverageDistance(const TArray<FVector2D>& Positions);
+    FVector2D CalculateCenterPoint(const TArray<FVector2D>& Positions);
+
+    void SetInputMode(bool bTouchMode);
+    bool ShouldProcessMouseInput() const;
+    bool ShouldProcessTouchInput() const;
+};
+```
+
+</details>
+
+### 📄 OrbitCameraActor.cpp
+
+Place this file in: `YourProject/Source/YourProject/Private/OrbitCameraActor.cpp`
+
+**⚠️ Important:** Replace `PRACTISEV2_API` with `YOURPROJECT_API` (match your project name)
+
+<details>
+<summary>Click to expand OrbitCameraActor.cpp code</summary>
+
+```cpp
+#include "OrbitCameraActor.h"
+#include "Camera/CameraComponent.h"
+#include "Components/SceneComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "InputActionValue.h"
+#include "InputCoreTypes.h"
+#include "Engine/World.h"
+#include "EngineUtils.h"
+
+AOrbitCameraActor::AOrbitCameraActor()
+{
+    PrimaryActorTick.bCanEverTick = true;
+
+    OrbitCenterComponent = CreateDefaultSubobject<USceneComponent>(TEXT("OrbitCenter"));
+    RootComponent = OrbitCenterComponent;
+
+    SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+    SpringArm->SetupAttachment(OrbitCenterComponent);
+    SpringArm->TargetArmLength = TargetArmLength;
+    SpringArm->bDoCollisionTest = false;
+    SpringArm->bUsePawnControlRotation = false;
+    SpringArm->bInheritPitch = false;
+    SpringArm->bInheritYaw = false;
+    SpringArm->bInheritRoll = false;
+    SpringArm->bEnableCameraLag = true;
+    SpringArm->CameraLagSpeed = CameraLagSpeed;
+    SpringArm->bEnableCameraRotationLag = true;
+    SpringArm->CameraRotationLagSpeed = CameraLagSpeed;
+    SpringArm->bUseCameraLagSubstepping = true;
+    SpringArm->CameraLagMaxTimeStep = 1.f / 60.f;
+
+    Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+    Camera->SetupAttachment(SpringArm);
+
+    AutoPossessPlayer = EAutoReceiveInput::Player0;
+    bUseControllerRotationPitch = false;
+    bUseControllerRotationYaw = false;
+    bUseControllerRotationRoll = false;
+}
+
+void AOrbitCameraActor::BeginPlay()
+{
+    Super::BeginPlay();
+
+    StartingTransform = GetActorTransform();
+    StartingLocation = GetActorLocation();
+    StartingRotation = SpringArm->GetComponentRotation();
+
+    // Initialize Orbit Center from property first
+    if (OrbitCenter.IsNearlyZero())
+    {
+        // If OrbitCenter is not set, try to find BP_Showpiece and use its location
+        for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+        {
+            AActor* FoundActor = *ActorItr;
+            if (FoundActor && FoundActor->GetName().Contains(TEXT("Showpiece")))
+            {
+                OrbitCenter = FoundActor->GetActorLocation();
+                break;
+            }
+        }
+        
+        // If still zero, use actor's current location (where BP_OrbitCamera is placed)
+        if (OrbitCenter.IsNearlyZero())
+        {
+            OrbitCenter = GetActorLocation();
+        }
+    }
+
+    // Read TargetArmLength from SpringArm (respects Blueprint settings)
+    TargetArmLength = SpringArm->TargetArmLength;
+    
+    // If TargetArmLength is still default (300) and camera is placed away from orbit center,
+    // calculate the distance from BP_OrbitCamera position to OrbitCenter as initial distance
+    const FVector ActorLocation = GetActorLocation();
+    const float DistanceToCenter = FVector::Dist(ActorLocation, OrbitCenter);
+    if (DistanceToCenter > 50.0f && FMath::IsNearlyEqual(TargetArmLength, 300.0f, 10.0f))
+    {
+        TargetArmLength = DistanceToCenter;
+    }
+    
+    // Clamp to valid range
+    TargetArmLength = FMath::Clamp(TargetArmLength, MinZoomDistance, MaxZoomDistance);
+    CurrentArmLength = TargetArmLength;
+    
+    // Use InitialYaw and InitialPitch properties
+    CurrentYaw = InitialYaw;
+    CurrentPitch = FMath::Clamp(InitialPitch, MinPitch, MaxPitch);
+
+    // If both are 0, use the camera's rotation from the level instead
+    if (FMath::IsNearlyZero(InitialYaw) && FMath::IsNearlyZero(InitialPitch))
+    {
+        CurrentYaw = StartingRotation.Yaw;
+        CurrentPitch = FMath::Clamp(StartingRotation.Pitch, MinPitch, MaxPitch);
+    }
+
+    // Apply height offset to orbit center
+    FVector FinalOrbitCenter = OrbitCenter;
+    FinalOrbitCenter.Z += HeightOffset;
+
+    // Use UpdateCameraTransform to properly set initial camera position
+    UpdateCameraTransform(FinalOrbitCenter, FRotator(CurrentPitch, CurrentYaw, 0.0f), TargetArmLength, true);
+
+    if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+    {
+        if (PC->GetPawn() != this)
+        {
+            PC->Possess(this);
+        }
+
+        PC->SetViewTarget(this);
+        PC->bShowMouseCursor = true;
+        PC->bEnableClickEvents = true;
+        PC->bEnableMouseOverEvents = true;
+
+        FInputModeGameAndUI InputMode;
+        InputMode.SetHideCursorDuringCapture(false);
+        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        PC->SetInputMode(InputMode);
+
+        if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
+        {
+            if (OrbitMappingContext)
+            {
+                if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+                        ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer))
+                {
+                    Subsystem->AddMappingContext(OrbitMappingContext, 0);
+                }
+            }
+        }
+    }
+}
+
+void AOrbitCameraActor::Tick(float DeltaSeconds)
+{
+    Super::Tick(DeltaSeconds);
+
+    if (!FMath::IsNearlyEqual(CurrentArmLength, TargetArmLength, 1.0f))
+    {
+        CurrentArmLength = FMath::FInterpTo(CurrentArmLength, TargetArmLength, DeltaSeconds, ZoomInterpolationSpeed);
+        SpringArm->TargetArmLength = CurrentArmLength;
+    }
+
+    ProcessTouchInput();
+
+    // Fallback: Direct mouse input handling (works even if Enhanced Input isn't configured)
+    if (ShouldProcessMouseInput() && !bIsTouchActive && ActiveTouchCount == 0)
+    {
+        if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+        {
+            bool bLeftMouseDown = PC->IsInputKeyDown(EKeys::LeftMouseButton);
+            bool bRightMouseDown = PC->IsInputKeyDown(EKeys::RightMouseButton);
+
+            if (bLeftMouseDown || bRightMouseDown)
+            {
+                float MouseX = 0.0f;
+                float MouseY = 0.0f;
+                PC->GetInputMouseDelta(MouseX, MouseY);
+
+                // Right-click: Pan the target (move OrbitCenter)
+                if (bRightMouseDown)
+                {
+                    if (FMath::Abs(MouseX) > 0.01f || FMath::Abs(MouseY) > 0.01f)
+                    {
+                        FVector CameraRight = Camera->GetRightVector();
+                        FVector CameraUp = Camera->GetUpVector();
+                        float PanScale = CurrentArmLength * 0.001f;
+                        FVector Movement = (-CameraRight * MouseX * PanSpeed * PanScale) +
+                                          (CameraUp * (-MouseY) * PanSpeed * PanScale);
+                        OrbitCenterComponent->AddWorldOffset(Movement);
+                        OrbitCenter = OrbitCenterComponent->GetComponentLocation();
+                        OrbitCenter.Z -= HeightOffset;
+                    }
+                }
+                // Left-click: Rotate camera around target
+                else if (bLeftMouseDown)
+                {
+                    if (FMath::Abs(MouseX) > 0.01f || FMath::Abs(MouseY) > 0.01f)
+                    {
+                        CurrentYaw += MouseX * OrbitSpeed * DeltaSeconds;
+                        CurrentPitch -= MouseY * OrbitSpeed * DeltaSeconds;
+                        CurrentPitch = FMath::Clamp(CurrentPitch, MinPitch, MaxPitch);
+                        SpringArm->SetWorldRotation(FRotator(CurrentPitch, CurrentYaw, 0.0f));
+                    }
+                }
+            }
+
+            // Handle mouse wheel zoom directly (fallback)
+            const float ScrollValue = PC->GetInputAnalogKeyState(EKeys::MouseWheelAxis);
+            if (FMath::Abs(ScrollValue) > 0.01f)
+            {
+                TargetArmLength -= ScrollValue * ZoomSpeed;
+                TargetArmLength = FMath::Clamp(TargetArmLength, MinZoomDistance, MaxZoomDistance);
+            }
+        }
+    }
+}
+
+void AOrbitCameraActor::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+    if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+    {
+        if (OrbitMoveAction)
+        {
+            EIC->BindAction(OrbitMoveAction, ETriggerEvent::Triggered, this, &AOrbitCameraActor::HandleOrbitMove);
+        }
+
+        if (PanMoveAction)
+        {
+            EIC->BindAction(PanMoveAction, ETriggerEvent::Triggered, this, &AOrbitCameraActor::HandlePanMove);
+        }
+
+        if (ZoomAction)
+        {
+            EIC->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &AOrbitCameraActor::HandleZoom);
+        }
+    }
+
+    PlayerInputComponent->BindTouch(IE_Pressed, this, &AOrbitCameraActor::OnTouchPressed);
+    PlayerInputComponent->BindTouch(IE_Released, this, &AOrbitCameraActor::OnTouchReleased);
+    PlayerInputComponent->BindTouch(IE_Repeat, this, &AOrbitCameraActor::OnTouchMoved);
+}
+
+void AOrbitCameraActor::HandleOrbitMove(const FInputActionValue& Value)
+{
+    if (!ShouldProcessMouseInput() || bIsTouchActive || ActiveTouchCount > 0)
+    {
+        return;
+    }
+
+    const FVector2D OrbitInput = Value.Get<FVector2D>();
+
+    if (!OrbitInput.IsNearlyZero())
+    {
+        CurrentYaw += OrbitInput.X * OrbitSpeed * GetWorld()->GetDeltaSeconds();
+        CurrentPitch += OrbitInput.Y * OrbitSpeed * GetWorld()->GetDeltaSeconds();
+        CurrentPitch = FMath::Clamp(CurrentPitch, MinPitch, MaxPitch);
+
+        SpringArm->SetWorldRotation(FRotator(CurrentPitch, CurrentYaw, 0.0f));
+    }
+}
+
+void AOrbitCameraActor::HandlePanMove(const FInputActionValue& Value)
+{
+    if (!ShouldProcessMouseInput())
+    {
+        return;
+    }
+
+    const FVector2D PanInput = Value.Get<FVector2D>();
+
+    if (!PanInput.IsNearlyZero())
+    {
+        const FVector RightVector = Camera->GetRightVector();
+        const FVector UpVector = Camera->GetUpVector();
+        const FVector Movement = (-RightVector * PanInput.X - UpVector * PanInput.Y) * PanSpeed;
+        OrbitCenterComponent->AddWorldOffset(Movement);
+    }
+}
+
+void AOrbitCameraActor::HandleZoom(const FInputActionValue& Value)
+{
+    const float ZoomInput = Value.Get<float>();
+    if (!FMath::IsNearlyZero(ZoomInput))
+    {
+        TargetArmLength -= ZoomInput * ZoomSpeed;
+        TargetArmLength = FMath::Clamp(TargetArmLength, MinZoomDistance, MaxZoomDistance);
+    }
+}
+
+void AOrbitCameraActor::OnTouchPressed(ETouchIndex::Type FingerIndex, FVector Location)
+{
+    SetInputMode(true);
+
+    const int32 TouchIndex = static_cast<int32>(FingerIndex);
+    if (TouchIndex >= 0 && TouchIndex < 5)
+    {
+        if (!TouchData[TouchIndex].bIsPressed)
+        {
+            ActiveTouchCount++;
+        }
+
+        TouchData[TouchIndex].bIsPressed = true;
+        TouchData[TouchIndex].Position = FVector2D(Location.X, Location.Y);
+        TouchData[TouchIndex].LastPosition = TouchData[TouchIndex].Position;
+    }
+}
+
+void AOrbitCameraActor::OnTouchReleased(ETouchIndex::Type FingerIndex, FVector Location)
+{
+    const int32 TouchIndex = static_cast<int32>(FingerIndex);
+    if (TouchIndex >= 0 && TouchIndex < 5 && TouchData[TouchIndex].bIsPressed)
+    {
+        TouchData[TouchIndex].bIsPressed = false;
+        TouchData[TouchIndex].Position = FVector2D::ZeroVector;
+        TouchData[TouchIndex].LastPosition = FVector2D::ZeroVector;
+        ActiveTouchCount = FMath::Max(0, ActiveTouchCount - 1);
+
+        if (ActiveTouchCount == 0)
+        {
+            bIsTouchActive = false;
+            for (int32 i = 0; i < 5; ++i)
+            {
+                TouchData[i].bIsPressed = false;
+                TouchData[i].Position = FVector2D::ZeroVector;
+                TouchData[i].LastPosition = FVector2D::ZeroVector;
+            }
+        }
+    }
+}
+
+void AOrbitCameraActor::OnTouchMoved(ETouchIndex::Type FingerIndex, FVector Location)
+{
+    const int32 TouchIndex = static_cast<int32>(FingerIndex);
+    if (TouchIndex >= 0 && TouchIndex < 5 && TouchData[TouchIndex].bIsPressed)
+    {
+        TouchData[TouchIndex].LastPosition = TouchData[TouchIndex].Position;
+        TouchData[TouchIndex].Position = FVector2D(Location.X, Location.Y);
+    }
+}
+
+void AOrbitCameraActor::ProcessTouchInput()
+{
+    if (!ShouldProcessTouchInput())
+    {
+        return;
+    }
+
+    int32 ActualTouchCount = 0;
+    for (int32 i = 0; i < 5; ++i)
+    {
+        if (TouchData[i].bIsPressed)
+        {
+            ActualTouchCount++;
+        }
+    }
+    ActiveTouchCount = ActualTouchCount;
+
+    if (ActiveTouchCount <= 0)
+    {
+        return;
+    }
+
+    switch (ActiveTouchCount)
+    {
+    case 1:
+        HandleSingleTouch();
+        break;
+    case 2:
+        HandleDualTouch();
+        break;
+    default:
+        HandleMultiTouch();
+        break;
+    }
+}
+
+void AOrbitCameraActor::HandleSingleTouch()
+{
+    int32 ActiveIndex = INDEX_NONE;
+    for (int32 i = 0; i < 5; ++i)
+    {
+        if (TouchData[i].bIsPressed)
+        {
+            ActiveIndex = i;
+            break;
+        }
+    }
+
+    if (ActiveIndex == INDEX_NONE)
+    {
+        return;
+    }
+
+    if (TouchData[ActiveIndex].LastPosition.IsNearlyZero())
+    {
+        TouchData[ActiveIndex].LastPosition = TouchData[ActiveIndex].Position;
+        return;
+    }
+
+    const FVector2D Delta = TouchData[ActiveIndex].Position - TouchData[ActiveIndex].LastPosition;
+    if (!Delta.IsNearlyZero())
+    {
+        CurrentYaw += Delta.X * TouchOrbitSensitivity;
+        CurrentPitch -= Delta.Y * TouchOrbitSensitivity;
+        CurrentPitch = FMath::Clamp(CurrentPitch, MinPitch, MaxPitch);
+        SpringArm->SetWorldRotation(FRotator(CurrentPitch, CurrentYaw, 0.0f));
+    }
+}
+
+void AOrbitCameraActor::HandleDualTouch()
+{
+    TArray<int32> ActiveIndices;
+    for (int32 i = 0; i < 5; ++i)
+    {
+        if (TouchData[i].bIsPressed)
+        {
+            ActiveIndices.Add(i);
+        }
+    }
+
+    if (ActiveIndices.Num() != 2)
+    {
+        return;
+    }
+
+    const int32 Index1 = ActiveIndices[0];
+    const int32 Index2 = ActiveIndices[1];
+
+    const FVector2D CurrentCenter = (TouchData[Index1].Position + TouchData[Index2].Position) * 0.5f;
+    const FVector2D LastCenter = (TouchData[Index1].LastPosition + TouchData[Index2].LastPosition) * 0.5f;
+    const FVector2D CenterDelta = CurrentCenter - LastCenter;
+
+    if (!CenterDelta.IsNearlyZero())
+    {
+        const FVector RightVector = Camera->GetRightVector();
+        const FVector UpVector = Camera->GetUpVector();
+        const FVector Movement = (-RightVector * CenterDelta.X - UpVector * -CenterDelta.Y) * TouchPanSensitivity;
+        OrbitCenterComponent->AddWorldOffset(Movement);
+    }
+
+    const float CurrentDistance = FVector2D::Distance(TouchData[Index1].Position, TouchData[Index2].Position);
+    const float LastDistance = FVector2D::Distance(TouchData[Index1].LastPosition, TouchData[Index2].LastPosition);
+    const float DistanceDelta = CurrentDistance - LastDistance;
+
+    if (!FMath::IsNearlyZero(DistanceDelta))
+    {
+        TargetArmLength -= DistanceDelta * TouchZoomSensitivity;
+        TargetArmLength = FMath::Clamp(TargetArmLength, MinZoomDistance, MaxZoomDistance);
+    }
+}
+
+void AOrbitCameraActor::HandleMultiTouch()
+{
+    TArray<FVector2D> CurrentPositions;
+    TArray<FVector2D> LastPositions;
+    for (int32 i = 0; i < 5; ++i)
+    {
+        if (TouchData[i].bIsPressed)
+        {
+            CurrentPositions.Add(TouchData[i].Position);
+            LastPositions.Add(TouchData[i].LastPosition);
+        }
+    }
+
+    if (CurrentPositions.Num() < 3)
+    {
+        return;
+    }
+
+    const float CurrentAvg = CalculateAverageDistance(CurrentPositions);
+    const float LastAvg = CalculateAverageDistance(LastPositions);
+    const float DistanceDelta = CurrentAvg - LastAvg;
+
+    if (!FMath::IsNearlyZero(DistanceDelta))
+    {
+        TargetArmLength -= DistanceDelta * TouchZoomSensitivity * 0.5f;
+        TargetArmLength = FMath::Clamp(TargetArmLength, MinZoomDistance, MaxZoomDistance);
+    }
+}
+
+float AOrbitCameraActor::CalculateAverageDistance(const TArray<FVector2D>& Positions)
+{
+    if (Positions.Num() < 2)
+    {
+        return 0.0f;
+    }
+
+    const FVector2D Center = CalculateCenterPoint(Positions);
+    float TotalDistance = 0.0f;
+    for (const FVector2D& Pos : Positions)
+    {
+        TotalDistance += FVector2D::Distance(Center, Pos);
+    }
+    return TotalDistance / Positions.Num();
+}
+
+FVector2D AOrbitCameraActor::CalculateCenterPoint(const TArray<FVector2D>& Positions)
+{
+    if (Positions.Num() == 0)
+    {
+        return FVector2D::ZeroVector;
+    }
+
+    FVector2D Sum = FVector2D::ZeroVector;
+    for (const FVector2D& Pos : Positions)
+    {
+        Sum += Pos;
+    }
+    return Sum / Positions.Num();
+}
+
+void AOrbitCameraActor::SetInputMode(bool bTouchMode)
+{
+    LastInputTime = GetWorld()->GetTimeSeconds();
+    if (bTouchMode)
+    {
+        bIsTouchActive = true;
+        bIsMouseActive = false;
+    }
+    else
+    {
+        bIsMouseActive = true;
+    }
+}
+
+bool AOrbitCameraActor::ShouldProcessMouseInput() const
+{
+    const float CurrentTime = GetWorld()->GetTimeSeconds();
+    if (bIsTouchActive && (CurrentTime - LastInputTime) < InputModeSwitchDelay)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool AOrbitCameraActor::ShouldProcessTouchInput() const
+{
+    return true;
+}
+
+void AOrbitCameraActor::UpdateCameraTransform(const FVector& NewOrbitCenterLocation, const FRotator& NewSpringArmRotation, float NewArmLength, bool bApplyImmediately)
+{
+    if (OrbitCenterComponent)
+    {
+        // Apply height offset to orbit center position
+        FVector FinalOrbitCenter = NewOrbitCenterLocation;
+        FinalOrbitCenter.Z += HeightOffset;
+        OrbitCenterComponent->SetWorldLocation(FinalOrbitCenter);
+        
+        // Store the base orbit center (without height offset) for reference
+        OrbitCenter = NewOrbitCenterLocation;
+    }
+
+    const float ClampedArmLength = FMath::Clamp(NewArmLength, MinZoomDistance, MaxZoomDistance);
+    TargetArmLength = ClampedArmLength;
+    if (bApplyImmediately)
+    {
+        CurrentArmLength = ClampedArmLength;
+        if (SpringArm)
+        {
+            SpringArm->TargetArmLength = CurrentArmLength;
+        }
+    }
+
+    CurrentPitch = FMath::Clamp(NewSpringArmRotation.Pitch, MinPitch, MaxPitch);
+    CurrentYaw = NewSpringArmRotation.Yaw;
+
+    if (SpringArm)
+    {
+        SpringArm->SetWorldRotation(FRotator(CurrentPitch, CurrentYaw, 0.0f));
+    }
+}
+```
+
+</details>
+
+### 📄 Build.cs Configuration
+
+Make sure your `YourProject.Build.cs` file includes the Enhanced Input module:
+
+**File:** `YourProject/Source/YourProject/YourProject.Build.cs`
+
+```csharp
+using UnrealBuildTool;
+
+public class YourProject : ModuleRules
+{
+    public YourProject(ReadOnlyTargetRules Target) : base(Target)
+    {
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+    
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+
+        PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput" }); // Required!
+
+        // Uncomment if you are using Slate UI
+        // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+    }
+}
+```
+
+**⚠️ Important:** Replace `YourProject` with your actual project name in the class name and file name.
 
 ---
 

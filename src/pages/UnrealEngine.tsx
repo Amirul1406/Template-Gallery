@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BookOpen, Camera, FolderTree, Code } from 'lucide-react';
+import { BookOpen, Camera, FolderTree, Code, Palette, Monitor } from 'lucide-react';
 
 interface DocItem {
   id: string;
@@ -16,6 +16,20 @@ const docs: DocItem[] = [
     description: 'Complete step-by-step guide to setting up an Orbit Camera system in Unreal Engine 5',
     icon: <Camera className="w-6 h-6" />,
     path: '/docs/unreal-engine/orbit-camera-setup.md'
+  },
+  {
+    id: 'materials-and-lighting',
+    title: 'Materials and Lighting',
+    description: 'Complete guide to creating materials and setting up lighting for your showroom',
+    icon: <Palette className="w-6 h-6" />,
+    path: '/docs/unreal-engine/materials-and-lighting.md'
+  },
+  {
+    id: 'ui-hud-guide',
+    title: 'UI & HUD Guide',
+    description: 'Build showroom-ready widgets, bind camera data, and add HUD buttons',
+    icon: <Monitor className="w-6 h-6" />,
+    path: '/docs/unreal-engine/ui-hud-guide.md'
   },
   {
     id: 'project-organization',
