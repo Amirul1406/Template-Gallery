@@ -30,6 +30,13 @@ import { interactiveCompass } from './compass/interactive-compass';
 // Scroll
 import { horizontalScroller } from './scroll/horizontal-scroller';
 
+// Gallery
+import { fadeGallery } from './Gallery/fade-gallery-component';
+
+//Conditional Buttons
+import { conditionalButtons } from './buttons/conditional-buttons';
+export { conditionalButtons};
+
 // Export all components as an array
 // The gallery will automatically pick up new components added here
 export const components = [
@@ -48,5 +55,7 @@ export const components = [
   fullscreenLoading,
   interactiveCompass,
   horizontalScroller,
+  conditionalButtons,
+  fadeGallery,
 ];
 

@@ -5,6 +5,7 @@ import ComponentDetail from './pages/ComponentDetail';
 import ColorPalette from './pages/ColorPalette';
 import LayoutGenerator from './pages/LayoutGenerator';
 import ResponsiveTester from './pages/ResponsiveTester';
+import UnrealEngine from './pages/UnrealEngine';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/colors" element={<ColorPalette />} />
         <Route path="/layouts" element={<LayoutGenerator />} />
         <Route path="/responsive" element={<ResponsiveTester />} />
+        <Route path="/unreal-engine" element={<UnrealEngine />} />
       </Routes>
     </div>
   );

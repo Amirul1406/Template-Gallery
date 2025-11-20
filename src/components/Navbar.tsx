@@ -132,6 +132,14 @@ export default function Navbar() {
             >
               Responsive
             </Link>
+            <Link
+              to="/unreal-engine"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/unreal-engine' ? 'text-white' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              Unreal Engine
+            </Link>
             
             {/* Search Toggle */}
             {!isSearchOpen ? (
