@@ -58,16 +58,20 @@ In **Content Browser** (in Unreal Editor), create these folders by right-clickin
    - Press Enter
 
 3. Right-click in `Core/` folder → **New Folder**
+   - Name: `Pawns`
+   - Press Enter
+
+4. Right-click in `Core/Pawns/` folder → **New Folder**
    - Name: `Cameras`
    - Press Enter
 
 #### Expand `Actors/` folder (already exists) and create inside it:
-4. Right-click in `Actors/` folder → **New Folder**
+5. Right-click in `Actors/` folder → **New Folder**
    - Name: `Props`
    - Press Enter
 
 #### Expand `Input/` folder (already exists) and create inside it:
-5. Right-click in `Input/` folder → **New Folder**
+6. Right-click in `Input/` folder → **New Folder**
    - Name: `Contexts`
    - Press Enter
 
@@ -76,7 +80,8 @@ In **Content Browser** (in Unreal Editor), create these folders by right-clickin
 Content/
 ├── Core/
 │   ├── GameModes/     ← New
-│   └── Cameras/       ← New
+│   └── Pawns/         ← New
+│       └── Cameras/   ← New
 ├── Actors/
 │   └── Props/         ← New
 ├── Input/
@@ -143,23 +148,38 @@ Content/
 5. Visual Studio opens - wait for it to compile
 6. Close Visual Studio (keep Unreal Editor open)
 
-7. Copy the Orbit Camera code into your new files:
+7. **Organize C++ files into proper folder structure:**
+   - In Visual Studio, right-click `Public` folder → **Add** → **New Filter** → Name: `Core`
+   - Right-click `Core` filter → **Add** → **New Filter** → Name: `Camera`
+   - Right-click `Private` folder → **Add** → **New Filter** → Name: `Core`
+   - Right-click `Core` filter → **Add** → **New Filter** → Name: `Camera`
+   - Move `OrbitCameraActor.h` into `Public/Core/Camera/` folder
+   - Move `OrbitCameraActor.cpp` into `Private/Core/Camera/` folder
+   
+8. **Copy the COMPLETE Orbit Camera code into your new files:**
+   - ⚠️ **Important:** You need to copy ALL the code (not just parts of it)
    - See **[Code Download Section](#-code-download)** below for complete code files
-   - Copy content from `OrbitCameraActor.h` and `.cpp` files
-   - Paste into: `YourProject/Source/YourProject/Public/OrbitCameraActor.h`
-   - Paste into: `YourProject/Source/YourProject/Private/OrbitCameraActor.cpp`
+   - **Copy the ENTIRE content** from `OrbitCameraActor.h` (expand the code block, select all, copy)
+   - **Copy the ENTIRE content** from `OrbitCameraActor.cpp` (expand the code block, select all, copy)
+   - Paste into: `YourProject/Source/YourProject/Public/Core/Camera/OrbitCameraActor.h`
+   - Paste into: `YourProject/Source/YourProject/Private/Core/Camera/OrbitCameraActor.cpp`
+   - **Why so much code?** It's a complete camera system with mouse + touch support, smooth interpolation, and all features. You need all of it for it to work!
 
-8. **Important:** Update the API macro:
+9. **Important:** Update the API macro:
    - In `OrbitCameraActor.h`, change `PRACTISEV2_API` to `YOURPROJECT_API` (match your project name)
    - Replace all instances of `PRACTISEV2_API` with your project's API macro
 
-9. Right-click `YourProject.uproject` → **Generate Visual Studio project files**
-10. Open `YourProject.sln` in Visual Studio
-11. **Build** → **Build Solution** (F7)
-12. Wait for compilation to finish (no errors!)
-13. Switch back to Unreal Editor
-14. ⏳ Wait for Unreal to finish compiling (you'll see "Compiling..." in bottom right)
-15. ✅ Wait until you see "Compile Complete!" - this is important!
+10. **Update include paths** (if needed):
+    - In `OrbitCameraActor.cpp`, the include should be: `#include "Core/Camera/OrbitCameraActor.h"`
+    - Visual Studio should handle this automatically, but verify the include path is correct
+
+11. Right-click `YourProject.uproject` → **Generate Visual Studio project files**
+12. Open `YourProject.sln` in Visual Studio
+13. **Build** → **Build Solution** (F7)
+14. Wait for compilation to finish (no errors!)
+15. Switch back to Unreal Editor
+16. ⏳ Wait for Unreal to finish compiling (you'll see "Compiling..." in bottom right)
+17. ✅ Wait until you see "Compile Complete!" - this is important!
 
 **Important:** Don't proceed until compilation is complete in both Visual Studio AND Unreal Editor!
 
@@ -171,7 +191,8 @@ Content/
 
 **⚠️ Important:** Make sure Part A is fully compiled before starting Part B!
 
-1. In **Content Browser**, navigate to: `Content/Core/Cameras/`
+1. In **Content Browser**, navigate to: `Content/Core/Pawns/Cameras/`
+   - If `Cameras/` folder doesn't exist, right-click `Core/Pawns/` → **New Folder** → Name: `Cameras`
 2. Right-click → **Blueprint Class**
 3. In the **Pick Parent Class** window:
    - **Search for:** `Orbit` or `OrbitCamera`
@@ -306,7 +327,7 @@ Content/
 
 ### Part B: Place Camera and Configure (2 min)
 
-1. In level, drag `BP_OrbitCamera` from `Content/Core/Cameras/` into level
+1. In level, drag `BP_OrbitCamera` from `Content/Core/Pawns/Cameras/` into level
 2. Select `BP_OrbitCamera` in **World Outliner** (top left)
 3. In **Details** panel, expand these sections:
    
@@ -392,11 +413,33 @@ You now have a fully working Orbit Camera system with Open World level!
 
 ## 📥 Code Download
 
-Complete source code for the Orbit Camera system. Copy these files directly into your project.
+Complete source code for the Orbit Camera system. **Yes, you need to copy ALL of it!** 
+
+### Why is there so much code?
+
+This is a **complete, production-ready** orbit camera system that includes:
+- ✅ Mouse controls (left-click orbit, right-click pan, scroll zoom)
+- ✅ Touch/gesture support (mobile devices)
+- ✅ Smooth camera interpolation
+- ✅ Input mode switching (mouse vs touch)
+- ✅ Configurable settings (speed, limits, etc.)
+- ✅ Blueprint integration
+
+**You need the complete code** because it's a full implementation, not just snippets. The code is well-organized and commented, so you can understand and modify it later if needed.
+
+### Quick Answer:
+1. **Copy the entire `.h` file** → Paste into `OrbitCameraActor.h`
+2. **Copy the entire `.cpp` file** → Paste into `OrbitCameraActor.cpp`
+3. **Replace `PRACTISEV2_API`** with your project's API macro (e.g., `SECONDTRAINING_API`)
+4. **Build the project** → Done!
+
+Copy these files directly into your project.
 
 ### 📄 OrbitCameraActor.h
 
-Place this file in: `YourProject/Source/YourProject/Public/OrbitCameraActor.h`
+Place this file in: `YourProject/Source/YourProject/Public/Core/Camera/OrbitCameraActor.h`
+
+**📁 Folder Structure:** Follow the project organization guide - C++ camera files should be in `Public/Core/Camera/` and `Private/Core/Camera/` folders.
 
 **⚠️ Important:** Replace `PRACTISEV2_API` with `YOURPROJECT_API` (match your project name)
 
@@ -555,7 +598,14 @@ private:
 
 ### 📄 OrbitCameraActor.cpp
 
-Place this file in: `YourProject/Source/YourProject/Private/OrbitCameraActor.cpp`
+Place this file in: `YourProject/Source/YourProject/Private/Core/Camera/OrbitCameraActor.cpp`
+
+**📁 Folder Structure:** Follow the project organization guide - C++ camera files should be in `Public/Core/Camera/` and `Private/Core/Camera/` folders.
+
+**⚠️ Important:** Update the include statement at the top of the `.cpp` file:
+```cpp
+#include "Core/Camera/OrbitCameraActor.h"
+```
 
 **⚠️ Important:** Replace `PRACTISEV2_API` with `YOURPROJECT_API` (match your project name)
 
@@ -563,7 +613,7 @@ Place this file in: `YourProject/Source/YourProject/Private/OrbitCameraActor.cpp
 <summary>Click to expand OrbitCameraActor.cpp code</summary>
 
 ```cpp
-#include "OrbitCameraActor.h"
+#include "Core/Camera/OrbitCameraActor.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SceneComponent.h"
 #include "EnhancedInputComponent.h"

@@ -167,27 +167,41 @@ export default function UnrealEngine() {
               </h2>
               {parsedContent.codeBlocks.length > 0 ? (
                 <div className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-                  {parsedContent.codeBlocks.map((block) => (
-                    <div key={block.id} className="bg-dark-bg border border-dark-border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-semibold text-blue-400 uppercase">
-                          {block.language || 'code'}
-                        </span>
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(block.code);
-                          }}
-                          className="text-xs text-gray-400 hover:text-white transition-colors"
-                          title="Copy code"
-                        >
-                          Copy
-                        </button>
+                  {parsedContent.codeBlocks.map((block) => {
+                    // Check if label looks like a filename (has extension)
+                    const isFileName = /\.(h|cpp|cs|ts|js|json|md|txt|ini|config|build\.cs)$/i.test(block.language);
+                    const displayLabel = isFileName ? block.language : (block.language || 'code').toUpperCase();
+                    
+                    return (
+                      <div key={block.id} className="bg-dark-bg border border-dark-border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-xs font-semibold text-blue-400 ${isFileName ? 'normal-case' : 'uppercase'}`}>
+                              {isFileName && '📄 '}
+                              {displayLabel}
+                            </span>
+                            {isFileName && (
+                              <span className="text-xs text-gray-500">
+                                ({block.language.includes('.h') ? 'Header file' : block.language.includes('.cpp') ? 'Implementation file' : 'Config file'})
+                              </span>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(block.code);
+                            }}
+                            className="text-xs text-gray-400 hover:text-white transition-colors"
+                            title="Copy code"
+                          >
+                            Copy
+                          </button>
+                        </div>
+                        <pre className="text-xs overflow-x-auto whitespace-pre-wrap break-words">
+                          <code className="text-gray-300">{block.code}</code>
+                        </pre>
                       </div>
-                      <pre className="text-xs overflow-x-auto">
-                        <code className="text-gray-300">{block.code}</code>
-                      </pre>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center text-gray-400 py-8">
@@ -214,6 +228,7 @@ function parseMarkdown(content: string): ParsedContent {
   let codeBlockLanguage = '';
   let codeBlockContent: string[] = [];
   let codeBlockIndex = 0;
+  let currentFileName = ''; // Track current file name from headers
 
   const flushParagraph = () => {
     if (currentParagraph.length > 0) {
@@ -228,8 +243,10 @@ function parseMarkdown(content: string): ParsedContent {
   const flushCodeBlock = () => {
     if (codeBlockContent.length > 0) {
       const code = codeBlockContent.join('\n');
+      // Use file name if available, otherwise use language
+      const displayLabel = currentFileName || codeBlockLanguage || 'code';
       codeBlocks.push({
-        language: codeBlockLanguage || 'text',
+        language: displayLabel,
         code: code,
         id: `code-${codeBlockIndex++}`
       });
@@ -238,12 +255,13 @@ function parseMarkdown(content: string): ParsedContent {
         <div key={textElements.length} className="my-4 p-3 bg-dark-bg border border-dark-border rounded-lg">
           <p className="text-sm text-gray-400 mb-2">
             <Code className="w-4 h-4 inline mr-1" />
-            Code example ({codeBlockLanguage || 'text'}) - See right panel →
+            Code example ({displayLabel}) - See right panel →
           </p>
         </div>
       );
       codeBlockContent = [];
       codeBlockLanguage = '';
+      currentFileName = ''; // Reset after using it
     }
   };
 
@@ -288,7 +306,7 @@ function parseMarkdown(content: string): ParsedContent {
       if (match.type === 'bold') {
         parts.push(<strong key={key} className="text-white font-semibold">{(match as any).text}</strong>);
       } else if (match.type === 'code') {
-        parts.push(<code key={key} className="bg-dark-bg px-1.5 py-0.5 rounded text-blue-400 text-sm">{(match as any).text}</code>);
+        parts.push(<code key={key} className="bg-dark-bg px-1.5 py-0.5 rounded text-blue-400 text-sm break-all whitespace-normal">{(match as any).text}</code>);
       } else if (match.type === 'link') {
         parts.push(<a key={key} href={(match as any).url} className="text-blue-400 hover:text-blue-300 underline" target="_blank" rel="noopener noreferrer">{(match as any).text}</a>);
       }
@@ -333,7 +351,21 @@ function parseMarkdown(content: string): ParsedContent {
     }
     if (line.startsWith('### ')) {
       flushParagraph();
-      textElements.push(<h3 key={index} className="text-xl font-semibold mb-2 mt-4 text-white">{line.substring(4)}</h3>);
+      const headerText = line.substring(4);
+      // Check if this is a file header (contains 📄 emoji or common file patterns)
+      const fileHeaderMatch = headerText.match(/📄\s*(.+?)(?:\s|$)/) || headerText.match(/(\w+\.(h|cpp|cs|ts|js|json|md|txt|ini|config))(?:\s|$)/i);
+      if (fileHeaderMatch) {
+        // Extract filename (remove emoji and extra text)
+        currentFileName = fileHeaderMatch[1] || fileHeaderMatch[0];
+        // Clean up filename (remove common prefixes like "Place this file in:")
+        currentFileName = currentFileName.replace(/^Place this file in:?\s*/i, '').trim();
+        // Extract just the filename if it's a path
+        const pathMatch = currentFileName.match(/([^\/\\]+\.(h|cpp|cs|ts|js|json|md|txt|ini|config))$/i);
+        if (pathMatch) {
+          currentFileName = pathMatch[1];
+        }
+      }
+      textElements.push(<h3 key={index} className="text-xl font-semibold mb-2 mt-4 text-white">{headerText}</h3>);
       return;
     }
 
