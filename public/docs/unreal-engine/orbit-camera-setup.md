@@ -166,8 +166,8 @@ Content/
    - **Why so much code?** It's a complete camera system with mouse + touch support, smooth interpolation, and all features. You need all of it for it to work!
 
 9. **Important:** Update the API macro:
-   - In `OrbitCameraActor.h`, change `PRACTISEV2_API` to `YOURPROJECT_API` (match your project name)
-   - Replace all instances of `PRACTISEV2_API` with your project's API macro
+   - In `OrbitCameraActor.h`, replace `YOURPROJECT_API` with your actual project API macro (e.g., `PRACTISEV3_API`, `MYPROJECT_API`)
+   - The code already uses `YOURPROJECT_API` as a placeholder - just replace it with your project name
 
 10. **Update include paths** (if needed):
     - In `OrbitCameraActor.cpp`, the include should be: `#include "Core/Camera/OrbitCameraActor.h"`
@@ -351,10 +351,19 @@ Content/
    **Expand "Camera|Pan" section** (click the arrow to expand):
    - **Pan Speed**: `5`
 
-**💡 Tip:** To set the initial camera distance from center:
-- Select the `SpringArm` component in the Components list
-- Set **Target Arm Length** (e.g., `800`, `1200`, etc.)
-- This is the starting distance from the orbit center
+**📏 Set Initial Camera Distance (IMPORTANT!):**
+- In the **Components** panel (left side of Blueprint editor), select **SpringArm** component
+- In **Details** panel → **Spring Arm** section:
+  - **Target Arm Length**: Set to your desired starting distance (e.g., `800`, `1200`, `2000`, `5000`)
+  - This is how far the camera starts from the orbit center
+  - **Higher values = camera starts further away** ✅
+  - **Lower values = camera starts closer** ✅
+- **Example:** For a large building, try `2000` to `5000` to start far enough to see the whole building
+
+**💡 Alternative:** You can also set this in the level:
+- Select `BP_OrbitCamera` in the level
+- In **Details** panel → **Components** section → Expand **SpringArm**
+- Set **Target Arm Length** there
 
 ✅ **Part B Done!** Camera placed and configured
 
@@ -397,6 +406,42 @@ You now have a fully working Orbit Camera system with Open World level!
 - Delete `Intermediate/` and `Binaries/` folders
 - Regenerate Visual Studio project files
 
+### Live Coding not working?
+**Live Coding** allows you to compile C++ changes without closing Unreal Editor.
+
+**Enable Live Coding:**
+1. In Unreal Editor: **Edit** → **Editor Preferences** (or **Edit** → **Project Settings**)
+2. Navigate to: **General** → **Loading & Saving** → **Live Coding**
+3. Check: **Enable Live Coding** ✅
+4. Click **"Restart Editor"** if prompted
+
+**If Live Coding is disabled or not compiling:**
+1. **Stop Live Coding:**
+   - Press `Ctrl + Alt + F11` in Unreal Editor
+   - Or: **Tools** → **Live Coding** → **Stop Live Coding**
+
+2. **Restart Live Coding:**
+   - Press `Ctrl + Alt + F11` again
+   - Or: **Tools** → **Live Coding** → **Start Live Coding**
+
+3. **Manual Compile:**
+   - In Visual Studio: **Build** → **Build Solution** (F7)
+   - Wait for compilation to finish
+   - Switch back to Unreal Editor
+   - Unreal will automatically detect changes and reload
+
+4. **If still not working:**
+   - Close Unreal Editor completely
+   - Build in Visual Studio: **Build** → **Build Solution** (F7)
+   - Wait for compilation to finish
+   - Reopen Unreal Editor
+   - Live Coding should work again
+
+**Common Issues:**
+- ❌ **"Unable to build while Live Coding is active"**: Press `Ctrl + Alt + F11` to stop Live Coding, then build in Visual Studio
+- ❌ **Changes not applying**: Make sure you saved files in Visual Studio, then press `Ctrl + Alt + F11` to trigger recompile
+- ❌ **Live Coding crashes**: Close editor, rebuild in Visual Studio, reopen editor
+
 ---
 
 ## 📚 Next Steps
@@ -430,7 +475,7 @@ This is a **complete, production-ready** orbit camera system that includes:
 ### Quick Answer:
 1. **Copy the entire `.h` file** → Paste into `OrbitCameraActor.h`
 2. **Copy the entire `.cpp` file** → Paste into `OrbitCameraActor.cpp`
-3. **Replace `PRACTISEV2_API`** with your project's API macro (e.g., `SECONDTRAINING_API`)
+3. **Replace `YOURPROJECT_API`** with your project's API macro (e.g., `PRACTISEV3_API`, `MYPROJECT_API`)
 4. **Build the project** → Done!
 
 Copy these files directly into your project.
@@ -441,7 +486,7 @@ Place this file in: `YourProject/Source/YourProject/Public/Core/Camera/OrbitCame
 
 **📁 Folder Structure:** Follow the project organization guide - C++ camera files should be in `Public/Core/Camera/` and `Private/Core/Camera/` folders.
 
-**⚠️ Important:** Replace `PRACTISEV2_API` with `YOURPROJECT_API` (match your project name)
+**⚠️ Important:** Replace `YOURPROJECT_API` with your actual project API macro (e.g., `PRACTISEV3_API`, `MYPROJECT_API` - match your project name)
 
 <details>
 <summary>Click to expand OrbitCameraActor.h code</summary>
@@ -461,7 +506,7 @@ class UInputAction;
 struct FInputActionValue;
 
 UCLASS()
-class PRACTISEV2_API AOrbitCameraActor : public APawn
+class YOURPROJECT_API AOrbitCameraActor : public APawn
 {
     GENERATED_BODY()
 
@@ -503,13 +548,13 @@ public:
     float HeightOffset = 0.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit")
-    float OrbitSpeed = 100.0f;
+    float OrbitSpeed = 80.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit")
     float MinPitch = -80.0f;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit")
-   float MaxPitch = -5.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit")
+    float MaxPitch = -5.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Zoom")
     float ZoomSpeed = 100.0f;
@@ -518,7 +563,7 @@ public:
     float MinZoomDistance = 100.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Zoom")
-    float MaxZoomDistance = 10000.0f;
+    float MaxZoomDistance = 1000000.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Zoom")
     float ZoomInterpolationSpeed = 5.0f;
@@ -532,7 +577,7 @@ public:
     // Initial rotation angles (sets starting camera position)
     // Set these to 0.0 to use the camera's current rotation in the level
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit|Initial Position", meta = (ToolTip = "Initial horizontal rotation (0 = front, 90 = right, 180 = back, 270 = left). Set to 0 to use camera's level rotation."))
-    float InitialYaw = 0.0f;
+    float InitialYaw = 180.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Orbit|Initial Position", meta = (ToolTip = "Initial vertical rotation (negative = down, positive = up, 0 = level). Set to 0 to use camera's level rotation. Default: -30 (tilted down 30°)."))
     float InitialPitch = -30.0f;
@@ -544,7 +589,7 @@ public:
     float TouchPanSensitivity = 2.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Touch")
-    float TouchZoomSensitivity = 5.0f;
+    float TouchZoomSensitivity = 10.0f;
 
     UFUNCTION(BlueprintCallable, Category = "Camera")
     void UpdateCameraTransform(const FVector& NewOrbitCenterLocation, const FRotator& NewSpringArmRotation, float NewArmLength, bool bApplyImmediately = false);
@@ -553,7 +598,7 @@ private:
     float CurrentPitch = 0.0f;
     float CurrentYaw = 0.0f;
 
-    float TargetArmLength = 300.0f;
+    float TargetArmLength = 19000.0f;
     float CurrentArmLength = 300.0f;
     FTransform StartingTransform;
     FRotator StartingRotation;
@@ -607,7 +652,7 @@ Place this file in: `YourProject/Source/YourProject/Private/Core/Camera/OrbitCam
 #include "Core/Camera/OrbitCameraActor.h"
 ```
 
-**⚠️ Important:** Replace `PRACTISEV2_API` with `YOURPROJECT_API` (match your project name)
+**⚠️ Important:** Replace `YOURPROJECT_API` with your actual project API macro (e.g., `PRACTISEV3_API`, `MYPROJECT_API` - match your project name)
 
 <details>
 <summary>Click to expand OrbitCameraActor.cpp code</summary>
@@ -854,7 +899,7 @@ void AOrbitCameraActor::HandleOrbitMove(const FInputActionValue& Value)
     if (!OrbitInput.IsNearlyZero())
     {
         CurrentYaw += OrbitInput.X * OrbitSpeed * GetWorld()->GetDeltaSeconds();
-        CurrentPitch += OrbitInput.Y * OrbitSpeed * GetWorld()->GetDeltaSeconds();
+        CurrentPitch -= OrbitInput.Y * OrbitSpeed * GetWorld()->GetDeltaSeconds(); // Use -= to match touch behavior (drag up = look up)
         CurrentPitch = FMath::Clamp(CurrentPitch, MinPitch, MaxPitch);
 
         SpringArm->SetWorldRotation(FRotator(CurrentPitch, CurrentYaw, 0.0f));

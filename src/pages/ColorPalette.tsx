@@ -1,17 +1,30 @@
-import { useState, useMemo } from 'react';
-import { Copy, Check, RefreshCw, Palette } from 'lucide-react';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { Copy, Check, RefreshCw, Palette, Upload, Image as ImageIcon, X, ZoomIn, Clipboard } from 'lucide-react';
 
 type ColorScheme = 'complementary' | 'analogous' | 'triadic' | 'tetradic' | 'monochromatic';
 
-interface ColorPalette {
-  colors: string[];
-  scheme: ColorScheme;
+interface PickedColor {
+  hex: string;
+  rgb: { r: number; g: number; b: number };
+  hsl: { h: number; s: number; l: number };
+  x: number;
+  y: number;
 }
 
 const ColorPalettePage = () => {
   const [baseColor, setBaseColor] = useState('#3b82f6');
   const [scheme, setScheme] = useState<ColorScheme>('complementary');
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
+  
+  // Image color picker states
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [pickedColors, setPickedColors] = useState<PickedColor[]>([]);
+  const [showMagnifier, setShowMagnifier] = useState(false);
+  const [magnifierPos, setMagnifierPos] = useState({ x: 0, y: 0 });
+  const [magnifierColor, setMagnifierColor] = useState<string>('#000000');
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const generatePalette = (color: string, schemeType: ColorScheme): string[] => {
     const rgb = hexToRgb(color);
@@ -79,6 +92,159 @@ const ColorPalettePage = () => {
     setBaseColor(colors[Math.floor(Math.random() * colors.length)]);
   };
 
+  // Image upload handler
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const src = event.target?.result as string;
+        setImageSrc(src);
+        setPickedColors([]);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Handle paste from clipboard
+  const handlePaste = useCallback(async (e: ClipboardEvent) => {
+    e.preventDefault();
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.type.indexOf('image') !== -1) {
+        const blob = item.getAsFile();
+        if (blob) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const src = event.target?.result as string;
+            setImageSrc(src);
+            setPickedColors([]);
+          };
+          reader.readAsDataURL(blob);
+        }
+        break;
+      }
+    }
+  }, []);
+
+  // Set up paste event listener
+  useEffect(() => {
+    const handlePasteEvent = (e: ClipboardEvent) => {
+      handlePaste(e);
+    };
+
+    window.addEventListener('paste', handlePasteEvent);
+    return () => {
+      window.removeEventListener('paste', handlePasteEvent);
+    };
+  }, [handlePaste]);
+
+  // Draw image on canvas
+  const drawImageOnCanvas = useCallback((img: HTMLImageElement) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    const maxWidth = container.clientWidth;
+    const maxHeight = 600;
+
+    let width = img.width;
+    let height = img.height;
+
+    // Scale to fit container
+    if (width > maxWidth) {
+      height = (height * maxWidth) / width;
+      width = maxWidth;
+    }
+    if (height > maxHeight) {
+      width = (width * maxHeight) / height;
+      height = maxHeight;
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(img, 0, 0, width, height);
+    }
+  }, []);
+
+  // Handle image load
+  const handleImageLoad = () => {
+    if (imageRef.current) {
+      drawImageOnCanvas(imageRef.current);
+    }
+  };
+
+  // Get color from canvas at position
+  const getColorAtPosition = (x: number, y: number): PickedColor | null => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    const canvasX = Math.floor((x - rect.left) * scaleX);
+    const canvasY = Math.floor((y - rect.top) * scaleY);
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+
+    const imageData = ctx.getImageData(canvasX, canvasY, 1, 1);
+    const [r, g, b] = imageData.data;
+
+    const hex = rgbToHex({ r, g, b });
+    const hsl = rgbToHsl({ r, g, b });
+
+    return {
+      hex,
+      rgb: { r, g, b },
+      hsl,
+      x: canvasX,
+      y: canvasY,
+    };
+  };
+
+  // Handle canvas click
+  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const color = getColorAtPosition(e.clientX, e.clientY);
+    if (color) {
+      setPickedColors((prev) => [...prev, color]);
+      setBaseColor(color.hex);
+    }
+  };
+
+  // Handle canvas mouse move (for magnifier)
+  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const color = getColorAtPosition(e.clientX, e.clientY);
+    if (color) {
+      setMagnifierColor(color.hex);
+      const rect = canvasRef.current?.getBoundingClientRect();
+      if (rect) {
+        setMagnifierPos({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        });
+      }
+    }
+  };
+
+  // Remove picked color
+  const removePickedColor = (index: number) => {
+    setPickedColors((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Use picked color as base
+  const usePickedColor = (color: PickedColor) => {
+    setBaseColor(color.hex);
+  };
+
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -89,8 +255,198 @@ const ColorPalettePage = () => {
             <h1 className="text-4xl font-bold">Color Palette Generator</h1>
           </div>
           <p className="text-gray-400 text-lg">
-            Generate beautiful color combinations for your projects. Choose a base color and explore different color schemes.
+            Generate beautiful color combinations for your projects. Choose a base color, pick colors from images (upload or paste screenshots), and explore different color schemes.
           </p>
+        </div>
+
+        {/* Image Color Picker Section */}
+        <div className="bg-dark-surface border border-dark-border rounded-lg p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <ImageIcon className="text-blue-400" size={24} />
+              <h2 className="text-xl font-semibold">Image Color Picker</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition-colors flex items-center gap-2">
+                <Upload size={18} />
+                Upload Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+              </label>
+              {imageSrc && (
+                <button
+                  onClick={() => {
+                    setImageSrc(null);
+                    setPickedColors([]);
+                  }}
+                  className="px-4 py-2 bg-dark-bg border border-dark-border hover:bg-dark-border rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <X size={18} />
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+
+          {imageSrc ? (
+            <div className="space-y-4">
+              <div
+                ref={containerRef}
+                className="relative border border-dark-border rounded-lg overflow-hidden bg-dark-bg"
+                onMouseEnter={() => setShowMagnifier(true)}
+                onMouseLeave={() => setShowMagnifier(false)}
+              >
+                <img
+                  ref={imageRef}
+                  src={imageSrc}
+                  alt="Color picker"
+                  onLoad={handleImageLoad}
+                  className="max-w-full h-auto block"
+                  style={{ display: 'none' }}
+                />
+                <canvas
+                  ref={canvasRef}
+                  onClick={handleCanvasClick}
+                  onMouseMove={handleCanvasMouseMove}
+                  className="w-full h-auto cursor-crosshair block"
+                />
+                
+                {/* Magnifier */}
+                {showMagnifier && (
+                  <div
+                    className="absolute pointer-events-none z-10"
+                    style={{
+                      left: `${magnifierPos.x}px`,
+                      top: `${magnifierPos.y}px`,
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                  >
+                    <div className="bg-black/80 rounded-lg p-2 border border-white/20">
+                      <div
+                        className="w-8 h-8 rounded border-2 border-white"
+                        style={{ backgroundColor: magnifierColor }}
+                      />
+                      <div className="text-xs text-white mt-1 text-center font-mono">
+                        {magnifierColor}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-2 rounded-lg text-sm">
+                  Click on the image to pick colors
+                </div>
+              </div>
+
+              {/* Picked Colors Display */}
+              {pickedColors.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Picked Colors</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {pickedColors.map((color, index) => (
+                      <div
+                        key={index}
+                        className="bg-dark-bg border border-dark-border rounded-lg overflow-hidden hover:border-blue-500 transition-all group"
+                      >
+                        <div
+                          className="h-24 w-full cursor-pointer"
+                          style={{ backgroundColor: color.hex }}
+                          onClick={() => usePickedColor(color)}
+                        />
+                        <div className="p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-mono text-gray-300">{color.hex}</span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removePickedColor(index);
+                              }}
+                              className="text-gray-400 hover:text-red-400 transition-colors"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                          <div className="text-xs text-gray-500 space-y-1">
+                            <div>RGB: {color.rgb.r}, {color.rgb.g}, {color.rgb.b}</div>
+                            <div>HSL: {Math.round(color.hsl.h)}°, {Math.round(color.hsl.s)}%, {Math.round(color.hsl.l)}%</div>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              copyToClipboard(color.hex);
+                            }}
+                            className="mt-2 w-full px-2 py-1 text-xs bg-dark-surface hover:bg-dark-border rounded transition-colors flex items-center justify-center gap-1"
+                          >
+                            {copiedColor === color.hex ? (
+                              <>
+                                <Check size={14} className="text-green-400" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy size={14} />
+                                Copy
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="border-2 border-dashed border-dark-border rounded-lg p-12 text-center">
+              <ImageIcon className="mx-auto text-gray-500 mb-4" size={48} />
+              <p className="text-gray-400 mb-2">Upload an image or paste a screenshot to pick colors from it</p>
+              <p className="text-gray-500 text-sm mb-6">Press <kbd className="px-2 py-1 bg-dark-bg border border-dark-border rounded text-xs">Ctrl+V</kbd> or <kbd className="px-2 py-1 bg-dark-bg border border-dark-border rounded text-xs">Cmd+V</kbd> to paste</p>
+              <div className="flex items-center justify-center gap-3">
+                <label className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition-colors flex items-center gap-2">
+                  <Upload size={18} />
+                  Upload Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                </label>
+                <button
+                  onClick={async () => {
+                    try {
+                      const clipboardItems = await navigator.clipboard.read();
+                      for (const item of clipboardItems) {
+                        for (const type of item.types) {
+                          if (type.startsWith('image/')) {
+                            const blob = await item.getType(type);
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              const src = event.target?.result as string;
+                              setImageSrc(src);
+                              setPickedColors([]);
+                            };
+                            reader.readAsDataURL(blob);
+                            return;
+                          }
+                        }
+                      }
+                    } catch (err) {
+                      console.error('Failed to read clipboard:', err);
+                    }
+                  }}
+                  className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <Clipboard size={18} />
+                  Paste from Clipboard
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Controls */}
@@ -392,4 +748,3 @@ const predefinedPalettes: Array<{ name: string; colors: string[]; scheme: ColorS
 ];
 
 export default ColorPalettePage;
-
