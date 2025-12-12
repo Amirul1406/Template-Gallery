@@ -14,7 +14,7 @@ export default function ComponentCard({ component }: ComponentCardProps) {
       <div className="aspect-video bg-dark-bg flex items-center justify-center p-1 relative isolate overflow-hidden">
         <div className="w-full h-full flex items-center justify-center [contain:layout_style_paint]">
           <div className="w-full h-full flex items-center justify-center scale-[0.75] origin-center">
-            <component.preview />
+        <component.preview />
           </div>
         </div>
       </div>

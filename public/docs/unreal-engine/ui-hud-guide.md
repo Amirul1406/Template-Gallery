@@ -18,6 +18,136 @@ You will:
 
 ---
 
+## 🎯 Understanding Key Widgets: WBP_ShowroomHUD and WBP_MainMenu
+
+Before we start building, let's understand the two main widgets you'll be working with:
+
+### **WBP_ShowroomHUD** - The Main HUD Container
+
+**Purpose:** This is the **parent widget** that contains all UI elements displayed on screen during gameplay.
+
+**What it does:**
+- Acts as the **root container** for all UI elements
+- Manages the **WidgetSwitcher** that shows different submenus (Camera, Lighting, Materials, Settings)
+- Contains the **main menu bar** (`WBP_MainMenu`) that's always visible
+- Displays **live information** like camera distance, showpiece names, and instructions
+- Can show **static elements** like titles, instructions, or help text
+
+**Think of it as:** The "main window" or "canvas" where all your UI elements are placed.
+
+**Structure:**
+```
+WBP_ShowroomHUD (Parent Container)
+  ├─ Static UI Elements (instructions, titles, info)
+  ├─ WBP_MainMenu (always visible bottom bar)
+  └─ WidgetSwitcher_Submenus (switches between different submenus)
+```
+
+**Visual Structure in Unreal Editor:**
+
+![WBP_ShowroomHUD widget structure showing Canvas Panel, WidgetSwitcher, WBP_Orbit, WBP_Target, and WBP_MainMenu](/assets/unreal-engine/ShowroomHUD.png)
+
+*This screenshot shows the Hierarchy panel of `WBP_ShowroomHUD` in the Unreal Engine Widget Blueprint editor. You can see how `WBP_MainMenu`, `WBP_Orbit`, `WBP_Target`, and the `WidgetSwitcher` are all nested inside the Canvas Panel.*
+
+---
+
+### **WBP_MainMenu** - The Navigation Bar
+
+**Purpose:** This is the **always-visible bottom navigation bar** that lets users switch between different menu categories.
+
+**What it does:**
+- Provides **category buttons** (Camera, Lighting, Materials, Settings) that are always accessible
+- Acts as the **primary navigation** for the entire UI system
+- When clicked, these buttons **switch the WidgetSwitcher** in the parent HUD to show the corresponding submenu
+- Stays **fixed at the bottom** of the screen for easy access
+
+**Think of it as:** The "main menu" or "tab bar" you see in many applications - always there, always clickable.
+
+**Structure:**
+```
+WBP_MainMenu (Bottom Navigation Bar)
+  ├─ Btn_MenuCamera (switches to Camera submenu)
+  ├─ Btn_MenuLighting (switches to Lighting submenu)
+  ├─ Btn_MenuMaterials (switches to Materials submenu)
+  └─ Btn_MenuSettings (switches to Settings submenu)
+```
+
+**Visual Structure in Unreal Editor:**
+
+![WBP_MainMenu widget structure showing Canvas Panel, Border, Horizontal Box with Btn_Orbit and Btn_Target buttons](/assets/unreal-engine/MainMenu.png)
+
+*This screenshot shows the Hierarchy panel and Designer view of `WBP_MainMenu`. You can see the Canvas Panel → Border → Horizontal Box structure, with the "Orbit" and "Target" buttons visible in the designer canvas at the bottom.*
+
+---
+
+### **How They Work Together**
+
+1. **WBP_ShowroomHUD** is created when the game starts (via `BP_ShowroomHUD`)
+2. **WBP_MainMenu** is embedded inside `WBP_ShowroomHUD` and always visible
+3. When you click a button in **WBP_MainMenu**, it tells the **WidgetSwitcher** in `WBP_ShowroomHUD` to switch to a different submenu
+4. The **submenus** (like `WBP_Submenu_Camera`) contain the actual action buttons (Front, Right, Back, Left, etc.)
+
+**Visual Flow:**
+```
+User clicks "Camera" button in WBP_MainMenu
+  ↓
+WBP_ShowroomHUD receives the click event
+  ↓
+WidgetSwitcher switches to Slot 0 (WBP_Submenu_Camera)
+  ↓
+Camera submenu appears with Front/Right/Back/Left buttons
+  ↓
+User clicks "Front" button in submenu
+  ↓
+Camera moves to front position
+```
+
+---
+
+### **Quick Comparison**
+
+| Widget | Purpose | Visibility | Contains |
+|--------|---------|------------|----------|
+| **WBP_ShowroomHUD** | Main container for all UI | Always visible | Main menu + WidgetSwitcher + static elements |
+| **WBP_MainMenu** | Category navigation | Always visible (bottom) | Category buttons (Camera, Lighting, etc.) |
+| **WBP_Submenu_*** | Action buttons | Only when selected | Specific action buttons (Front, Right, etc.) |
+
+---
+
+### **Visual Reference: Widget Blueprints in Content Browser**
+
+When you create your widgets, you'll see them in the Content Browser like this:
+
+![Widget Blueprints in Content Browser showing WBP_Main Menu, WBP_Orbit, WBP_ShowroomHUD, and WBP_Target](/assets/unreal-engine/widget-blueprints-content-browser.png)
+
+**Note:** To add this screenshot to your project:
+1. Take a screenshot of your Content Browser showing the widget blueprints
+2. Save it as `widget-blueprints-content-browser.png` in `public/assets/unreal-engine/`
+3. The image will automatically appear above
+
+**What you see:**
+- **WBP_Main Menu**: The bottom navigation bar widget (always visible)
+- **WBP_ShowroomHUD**: The main HUD container widget (parent of everything)
+- **WBP_Orbit**: Widget for orbit camera controls (optional, if created separately)
+- **WBP_Target**: Widget for target/selection display (optional, if created)
+
+---
+
+### **Summary: Key Takeaways**
+
+✅ **WBP_ShowroomHUD** = The main container that holds everything  
+✅ **WBP_MainMenu** = The bottom navigation bar with category buttons  
+✅ **WBP_Submenu_*** = The action buttons that appear when you click a category  
+✅ **WidgetSwitcher** = The mechanism that switches between submenus  
+
+**Remember:** 
+- `WBP_ShowroomHUD` is created **once** when the game starts
+- `WBP_MainMenu` is **embedded inside** `WBP_ShowroomHUD` and is **always visible**
+- Clicking buttons in `WBP_MainMenu` **switches** which submenu is shown in the WidgetSwitcher
+- Each submenu has its own **action buttons** that perform specific functions
+
+---
+
 ## ✅ Prerequisites
 
 - Unreal Engine 5.6+
@@ -104,11 +234,41 @@ Use a Canvas Panel (default root). Add:
    - Click the function → in **Details** panel:
      - **Function Name**: `UpdateCameraDistance`
    - In the **Function** graph:
-     - **Right-click** → search **"Add Input"** → select **"Float"**
+     - You'll see a **function entry node** (purple node on the left with "UpdateCameraDistance" and a `Distance` input)
+     - **Right-click** → search **"Add Input"** → select **"Float"** (if you haven't added the input yet)
      - Name the input: `Distance`
-     - From the input pin, **drag** → search **"Set Camera Distance"** → select it
-     - Connect the input `Distance` to the **"Set Camera Distance"** node's value input
+     - **Add "Update Camera Distance" function call:**
+       - From the **function entry node's execution pin** (white arrow on the right), **drag** → search **"Update Camera Distance"** → select it
+       - **Note:** "Update Camera Distance" is a function that retrieves/calculates the current camera distance (this may be a custom function you've created or a built-in function)
+     - **To create the "SET Camera Distance" node:**
+       - In the **left panel** (My Blueprint), find the **Variables** section
+       - Find the **"Camera Distance"** variable (the Float variable you created in step 3.1)
+       - **Drag** the **"Camera Distance"** variable from the Variables panel into the graph
+       - A menu will appear → select **"SET Camera Distance"** (or just **"Set"**)
+       - This creates a white/green SET node for the Camera Distance variable
+     - **Connect the nodes:**
+       - From **"Update Camera Distance"** execution output (white arrow on the right), **drag** → connect to **"SET Camera Distance"** execution input (white arrow on the left)
+       - From **"Update Camera Distance"** `Distance` output pin (green), **drag** → connect to **"SET Camera Distance"** `Camera Distance` input pin (green)
      - **Compile** the function
+
+**Visual Reference:**
+
+![UpdateCameraDistance function showing Update Camera Distance call node connected to SET Camera Distance node](/assets/unreal-engine/LiveData.png)
+
+*This screenshot shows the correct Blueprint graph for the `UpdateCameraDistance` function. Notice how "Update Camera Distance" (blue call node) outputs a Distance value that is then stored in the "Camera Distance" variable using the SET node.*
+
+The function graph should look like this:
+```
+[Function Entry] → [Update Camera Distance] → [SET Camera Distance]
+                      ↓ (Distance output)
+                      └─────────────────────→ (Camera Distance input)
+```
+
+**Important Notes:**
+- **"SET Camera Distance"** is created by dragging the **"Camera Distance"** variable from the Variables panel, not by searching
+- If you don't have an "Update Camera Distance" function available, you can:
+  - **Option 1:** Connect the `Distance` input directly to "SET Camera Distance" (simpler, if you're passing the distance value from outside)
+  - **Option 2:** Create a separate function that calculates/retrieves the camera distance from your Orbit Camera system
 
 ✅ **HUD ready to show live info.**
 
@@ -146,6 +306,12 @@ Use a Canvas Panel (default root). Add:
 3. The **"Add to Viewport"** node will appear
 4. Connect the white arrow from **"Create Widget"** → **"Add to Viewport"**
 
+**Visual Reference - BP_ShowroomHUD Event Graph:**
+
+![BP_ShowroomHUD Event Graph showing Event BeginPlay connected to Create Widget and Add to Viewport nodes](/assets/unreal-engine/BO_ShowroomHUDgraph.png)
+
+*This screenshot shows the complete Event Graph setup for `BP_ShowroomHUD`. Notice how `Event BeginPlay` triggers the `Create Widget` node (which creates `WBP_ShowroomHUD`), and then the widget is added to the viewport using `Add to Viewport`. This is the standard setup for displaying UI widgets in-game.*
+
 **Step 5: Set HUD Class in Game Mode**
 
 1. Open your **Game Mode** Blueprint (e.g., `BP_ShowroomGameMode`)
@@ -154,6 +320,145 @@ Use a Canvas Panel (default root). Add:
 4. **Compile** and **Save**
 
 ✅ **HUD now visible when you hit Play!**
+
+---
+
+### 📍 Adjusting Widget Position
+
+If your UI is showing but not in the position you want, you can adjust it using **Anchors** and **Offsets** in the Designer tab.
+
+**How to Position Widgets:**
+
+1. **Open `WBP_ShowroomHUD`** → click the **Designer** tab
+2. **Select the widget element** you want to reposition (e.g., Border, TextBlock, Button)
+3. In the **Details** panel (right side), find the **"Anchors"** section
+4. **Click the anchor preset grid** to choose where to anchor the widget:
+   - **Top-left** (top row, left column) - anchors to top-left corner
+   - **Top-center** (top row, center column) - anchors to top-center
+   - **Top-right** (top row, right column) - anchors to top-right corner
+   - **Center-left** (middle row, left column) - anchors to center-left
+   - **Center** (middle row, center column) - anchors to center of screen
+   - **Center-right** (middle row, right column) - anchors to center-right
+   - **Bottom-left** (bottom row, left column) - anchors to bottom-left
+   - **Bottom-center** (bottom row, center column) - anchors to bottom-center
+   - **Bottom-right** (bottom row, right column) - anchors to bottom-right
+
+5. **Adjust the Offset** values:
+   - **Offset X**: Positive = move right, Negative = move left
+   - **Offset Y**: Positive = move down, Negative = move up
+   - **Example**: `X: 0, Y: -200` means 200 pixels up from the anchor point
+
+6. **Adjust the Size** (if needed):
+   - **Size X**: Width of the widget
+   - **Size Y**: Height of the widget
+
+**Common Positioning Examples:**
+
+| Desired Position | Anchor | Offset X | Offset Y | Notes |
+|-----------------|--------|----------|----------|-------|
+| Top-left corner | Top-left | `24` | `24` | 24px from top and left edges |
+| Top-center | Top-center | `0` | `50` | 50px from top, centered horizontally |
+| Top-right corner | Top-right | `-24` | `24` | 24px from top and right edges |
+| Bottom-center | Bottom-center | `0` | `-200` | 200px from bottom, centered |
+| Bottom-right | Bottom-right | `-24` | `-24` | 24px from bottom and right edges |
+| Center of screen | Center | `0` | `0` | Perfectly centered |
+
+**Step-by-Step Example: Moving Widget to Top-Left**
+
+1. **Select your widget** (e.g., Border) in the Designer
+2. **In Details panel**, find **"Anchors"** section
+3. **Click the anchor preset** → select **top-left** (top row, left column)
+4. **Set Offset**:
+   - **Offset X**: `24` (24 pixels from left edge)
+   - **Offset Y**: `24` (24 pixels from top edge)
+5. **Set Size** (if needed):
+   - **Size X**: `360` (width)
+   - **Size Y**: `240` (height)
+6. **Compile** and **Save**
+7. **Test in-game** - the widget should now appear in the top-left corner
+
+**Tips:**
+- **Negative Y values** move elements **up** (away from bottom)
+- **Positive Y values** move elements **down** (away from top)
+- **Negative X values** move elements **left** (away from right)
+- **Positive X values** move elements **right** (away from left)
+- Use **Preview** mode in Designer (top toolbar) to see how it looks at different screen sizes
+- You can also **drag widgets** directly in the Designer canvas to reposition them visually
+
+**If your widget is still not positioned correctly:**
+- Make sure you're editing the **correct widget** (`WBP_ShowroomHUD`, not `BP_ShowroomHUD`)
+- Check that you **Compiled** and **Saved** the widget
+- Try **closing and reopening** the widget blueprint
+- Make sure the widget is a **child of Canvas Panel** (not directly on the root)
+
+---
+
+### ⚠️ Troubleshooting: "Asset Failed to Save" Error
+
+If you get an error message saying **"The asset 'BP_ShowroomGameMode' failed to save"** after setting the HUD Class, try these solutions:
+
+#### Solution 1: Compile BP_ShowroomHUD First (Most Common Fix)
+
+1. **Close** the Game Mode Blueprint
+2. **Open `BP_ShowroomHUD`** (the HUD Blueprint you created)
+3. Click **"Compile"** button (top toolbar)
+4. Wait for compilation to finish (check for green checkmark)
+5. Click **"Save"**
+6. **Close** `BP_ShowroomHUD`
+7. **Reopen** your Game Mode Blueprint
+8. Set the HUD Class again and try saving
+
+#### Solution 2: Check for Compilation Errors
+
+1. **Open `BP_ShowroomHUD`**
+2. Check the **Output Log** (bottom panel) for any red error messages
+3. Fix any compilation errors:
+   - Missing nodes
+   - Broken connections
+   - Invalid variable references
+4. **Compile** again until there are no errors
+5. **Save** the HUD Blueprint
+6. Try setting the HUD Class in Game Mode again
+
+#### Solution 3: Verify BP_ShowroomHUD Exists
+
+1. In **Content Browser**, navigate to `Content/Core/GameModes/`
+2. Make sure `BP_ShowroomHUD` exists and is not corrupted
+3. If it's missing, recreate it following **Part 4 - Step 1** above
+4. If it shows a red X or error icon, delete it and recreate it
+
+#### Solution 4: Close All Blueprint Windows
+
+1. **Close ALL** open Blueprint editor windows
+2. **Save All** (Ctrl+S or File → Save All)
+3. **Reopen** only the Game Mode Blueprint
+4. Set the HUD Class and try saving again
+
+#### Solution 5: Check File Permissions
+
+1. Make sure the `.uasset` files are not:
+   - Read-only
+   - Locked by another process
+   - In a protected folder
+2. Right-click the file in Windows Explorer → **Properties** → uncheck **"Read-only"** if checked
+
+#### Solution 6: Use "Retry" Button
+
+When the error dialog appears:
+1. Click **"Retry"** (sometimes it works on the second attempt)
+2. If Retry doesn't work, click **"Continue"** to skip this asset
+3. Then manually save the Game Mode later using **File → Save** or **Ctrl+S**
+
+#### Solution 7: Recreate BP_ShowroomHUD (Last Resort)
+
+If nothing else works:
+1. **Delete** the existing `BP_ShowroomHUD` (if it exists)
+2. **Recreate** it following **Part 4 - Step 1** above
+3. Make sure it compiles without errors
+4. **Save** it
+5. Then set it as the HUD Class in your Game Mode
+
+**Most Common Cause:** `BP_ShowroomHUD` has compilation errors or wasn't saved properly before being assigned to the Game Mode.
 
 ---
 
@@ -258,6 +563,12 @@ WBP_ShowroomHUD (Parent)
       └─ Slot 3: WBP_Submenu_Settings
 ```
 
+**Example Widget Structure (WBP_Target):**
+
+![Widget structure example showing Canvas Panel, Border, Horizontal Box with buttons (Btn_1, Btn_2, Btn_Back)](/assets/unreal-engine/Structure.png)
+
+*This screenshot shows an example of a submenu widget structure (`WBP_Target`). Notice the hierarchy: Canvas Panel → Border → Horizontal Box → Buttons. This same structure pattern applies to all submenu widgets you'll create (Camera, Lighting, Materials, Settings).*
+
 ---
 
 ### 6.2 Step 1: Create Main Menu Widget (10 min)
@@ -344,6 +655,16 @@ WBP_ShowroomHUD (Parent)
 5. **Style buttons** (wrap each in Size Box, set dimensions `200 x 50`)
 
 6. **Compile and Save** `WBP_Submenu_Camera`
+
+**Visual Reference - Widget Hierarchy Structure:**
+
+The structure you're building follows this pattern (as shown in the Structure.png example):
+- **Canvas Panel** (root container)
+  - **Border** (styling container)
+    - **Horizontal Box** (layout container)
+      - **Buttons** (interactive elements)
+
+This hierarchical structure ensures proper layout, styling, and functionality. Each submenu widget follows this same pattern.
 
 #### 2.2 Create Other Submenu Widgets
 
