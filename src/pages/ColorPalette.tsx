@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
-import { Copy, Check, RefreshCw, Palette, Upload, Image as ImageIcon, X, ZoomIn, Clipboard } from 'lucide-react';
+import { Copy, Check, RefreshCw, Palette, Upload, Image as ImageIcon, X, Clipboard } from 'lucide-react';
 
 type ColorScheme = 'complementary' | 'analogous' | 'triadic' | 'tetradic' | 'monochromatic';
 

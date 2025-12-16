@@ -33,9 +33,9 @@ const LayoutGeneratorPage = () => {
       case 'card-grid':
         return generateCardGridCode(lang, cfg);
       case 'centered':
-        return generateCenteredCode(lang, cfg);
+        return generateCenteredCode(lang);
       case 'split-screen':
-        return generateSplitScreenCode(lang, cfg);
+        return generateSplitScreenCode(lang);
       case 'header-footer':
         return generateHeaderFooterCode(lang, cfg);
       default:
@@ -530,7 +530,7 @@ export default CardGridLayout;`;
     }
   };
 
-  const generateCenteredCode = (lang: CodeLanguage, cfg: LayoutConfig): string => {
+  const generateCenteredCode = (lang: CodeLanguage): string => {
     if (lang === 'react') {
       return `import './Centered.css';
 
@@ -613,7 +613,7 @@ export default CenteredLayout;`;
     }
   };
 
-  const generateSplitScreenCode = (lang: CodeLanguage, cfg: LayoutConfig): string => {
+  const generateSplitScreenCode = (lang: CodeLanguage): string => {
     if (lang === 'react') {
       return `import './SplitScreen.css';
 

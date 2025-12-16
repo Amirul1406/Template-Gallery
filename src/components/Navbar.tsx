@@ -133,6 +133,14 @@ export default function Navbar() {
               Responsive
             </Link>
             <Link
+              to="/inspiration"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/inspiration' ? 'text-white' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              Inspiration
+            </Link>
+            <Link
               to="/unreal-engine"
               className={`text-sm font-medium transition-colors ${
                 location.pathname === '/unreal-engine' ? 'text-white' : 'text-gray-400 hover:text-white'

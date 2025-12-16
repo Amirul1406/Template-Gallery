@@ -1,4 +1,3 @@
-import React from 'react';
 import { Component } from '../../types/component';
 
 const Preview = () => (

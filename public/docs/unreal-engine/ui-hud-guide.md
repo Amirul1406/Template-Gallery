@@ -231,24 +231,39 @@ Use a Canvas Panel (default root). Add:
 2. **In the left panel**, find the **Functions** section (above Variables).
 3. **Click the "+" button** to add a new function.
 4. **Add `UpdateCameraDistance` function:**
-   - Click the function → in **Details** panel:
-     - **Function Name**: `UpdateCameraDistance`
-   - In the **Function** graph:
-     - You'll see a **function entry node** (purple node on the left with "UpdateCameraDistance" and a `Distance` input)
-     - **Right-click** → search **"Add Input"** → select **"Float"** (if you haven't added the input yet)
-     - Name the input: `Distance`
-     - **Add "Update Camera Distance" function call:**
-       - From the **function entry node's execution pin** (white arrow on the right), **drag** → search **"Update Camera Distance"** → select it
-       - **Note:** "Update Camera Distance" is a function that retrieves/calculates the current camera distance (this may be a custom function you've created or a built-in function)
-     - **To create the "SET Camera Distance" node:**
-       - In the **left panel** (My Blueprint), find the **Variables** section
-       - Find the **"Camera Distance"** variable (the Float variable you created in step 3.1)
-       - **Drag** the **"Camera Distance"** variable from the Variables panel into the graph
-       - A menu will appear → select **"SET Camera Distance"** (or just **"Set"**)
-       - This creates a white/green SET node for the Camera Distance variable
-     - **Connect the nodes:**
-       - From **"Update Camera Distance"** execution output (white arrow on the right), **drag** → connect to **"SET Camera Distance"** execution input (white arrow on the left)
-       - From **"Update Camera Distance"** `Distance` output pin (green), **drag** → connect to **"SET Camera Distance"** `Camera Distance` input pin (green)
+   - **Click the new function** in the Functions list (it will be named something like "NewFunction_0")
+   - In the **Details panel** (right side), you'll see the function properties:
+     - **Function Name**: Change this to `UpdateCameraDistance`
+     - **Inputs** section: This is where you add function inputs
+   - **Add the Distance input:**
+     - **Important:** If you already see a green "Distance" pin on the function entry node in the graph, you can skip this step - the input is already added!
+     - In the **Details panel**, find the **"Inputs"** section
+     - **Click the "+" button** next to "Inputs" (or right-click in the Inputs area → **"Add Input"**)
+     - A new input will appear
+     - **Set the input properties:**
+       - **Input Name**: Type `Distance`
+       - **Input Type**: Click the dropdown → search **"Float"** → select it
+     - You should now see "Distance (Float)" in the Inputs list
+     - **Note:** After adding the input, you'll see a green "Distance" output pin appear on the purple function entry node in the graph
+   - **Open the Function graph:**
+     - **Double-click** the `UpdateCameraDistance` function in the Functions list (left panel)
+     - OR click the function and look at the graph area - it should show the function graph
+     - You'll see a **purple function entry node** on the left with:
+       - A white execution pin (arrow) on the right
+       - A green **"Distance"** output pin (this is the input you just added)
+   - **Add "Update Camera Distance" function call:**
+     - From the **function entry node's execution pin** (white arrow on the right), **drag** → search **"Update Camera Distance"** → select it
+     - **Note:** "Update Camera Distance" is a function that retrieves/calculates the current camera distance (this may be a custom function you've created or a built-in function)
+     - The "Update Camera Distance" node should appear (blue node)
+   - **To create the "SET Camera Distance" node:**
+     - In the **left panel** (My Blueprint), find the **Variables** section
+     - Find the **"Camera Distance"** variable (the Float variable you created in step 3.1)
+     - **Drag** the **"Camera Distance"** variable from the Variables panel into the graph
+     - A menu will appear → select **"SET Camera Distance"** (or just **"Set"**)
+     - This creates a white/green SET node for the Camera Distance variable
+   - **Connect the nodes:**
+     - From **"Update Camera Distance"** execution output (white arrow on the right), **drag** → connect to **"SET Camera Distance"** execution input (white arrow on the left)
+     - From **"Update Camera Distance"** `Distance` output pin (green), **drag** → connect to **"SET Camera Distance"** `Camera Distance` input pin (green)
      - **Compile** the function
 
 **Visual Reference:**

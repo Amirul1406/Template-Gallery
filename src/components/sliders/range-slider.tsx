@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Component } from '../../types/component';
 
 const Preview = () => {

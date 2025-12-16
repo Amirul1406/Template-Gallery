@@ -95,23 +95,6 @@ export default function UnrealEngine() {
     setImagePosition({ x: 0, y: 0 });
   }, []);
 
-  // Scroll to and highlight code block
-  const scrollToCodeBlock = useCallback((codeId: string) => {
-    const codeBlock = codeBlockRefs.current[codeId];
-    if (codeBlock) {
-      // Highlight the code block
-      setHighlightedCodeId(codeId);
-      
-      // Scroll to the code block
-      codeBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      
-      // Remove highlight after 3 seconds
-      setTimeout(() => {
-        setHighlightedCodeId(null);
-      }, 3000);
-    }
-  }, []);
-
   const loadDocument = useCallback(async (doc: DocItem) => {
     setLoading(true);
     setSelectedDoc(doc);
@@ -492,9 +475,6 @@ export default function UnrealEngine() {
               {parsedContent.codeBlocks.length > 0 ? (
                 <div className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto" id="code-examples-container">
                   {parsedContent.codeBlocks.map((block) => {
-                    // Check if label looks like a filename (has extension)
-                    const isFileName = /\.(h|cpp|cs|ts|js|json|md|txt|ini|config|build\.cs)$/i.test(block.language);
-                    const displayLabel = isFileName ? block.language : (block.language || 'code').toUpperCase();
                     const isHighlighted = highlightedCodeId === block.id;
                     
                     return (
@@ -541,31 +521,31 @@ export default function UnrealEngine() {
             <h2 className="text-xl font-semibold mb-4">Getting Started</h2>
             <div className="space-y-2">
               {docs.map((doc, index) => (
-                <button
-                  key={doc.id}
-                  onClick={() => loadDocument(doc)}
-                  className={`w-full text-left p-4 rounded-lg border transition-all ${
-                    selectedDoc?.id === doc.id
-                      ? 'bg-blue-500/20 border-blue-500 text-white'
-                      : 'bg-dark-bg border-dark-border text-gray-300 hover:border-blue-500/50 hover:text-white'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
+                  <button
+                    key={doc.id}
+                    onClick={() => loadDocument(doc)}
+                    className={`w-full text-left p-4 rounded-lg border transition-all ${
+                      selectedDoc?.id === doc.id
+                        ? 'bg-blue-500/20 border-blue-500 text-white'
+                        : 'bg-dark-bg border-dark-border text-gray-300 hover:border-blue-500/50 hover:text-white'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-xs text-blue-400 font-semibold">
                       {index + 1}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold mb-1 text-sm">{doc.title}</h3>
                       <p className="text-xs text-gray-400 line-clamp-2">{doc.description}</p>
+                      </div>
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                ))}
             </div>
           </div>
 
           {/* Content */}
-          <div className="bg-dark-surface border border-dark-border rounded-lg p-8 min-h-[600px]">
+            <div className="bg-dark-surface border border-dark-border rounded-lg p-8 min-h-[600px]">
             {loading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
@@ -575,11 +555,11 @@ export default function UnrealEngine() {
                 {parsedContent.textContent}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-center text-gray-400">
-                <BookOpen className="w-16 h-16 mb-4 opacity-50" />
-                <h2 className="text-2xl font-semibold mb-2">Select a Guide</h2>
-                <p>Choose a documentation guide from the sidebar to get started</p>
-              </div>
+                <div className="flex flex-col items-center justify-center h-full text-center text-gray-400">
+                  <BookOpen className="w-16 h-16 mb-4 opacity-50" />
+                  <h2 className="text-2xl font-semibold mb-2">Select a Guide</h2>
+                  <p>Choose a documentation guide from the sidebar to get started</p>
+                </div>
             )}
           </div>
 
@@ -592,8 +572,6 @@ export default function UnrealEngine() {
             {parsedContent.codeBlocks.length > 0 ? (
               <div className="space-y-4 max-h-[600px] overflow-y-auto" id="code-examples-container-mobile">
                 {parsedContent.codeBlocks.map((block) => {
-                  const isFileName = /\.(h|cpp|cs|ts|js|json|md|txt|ini|config|build\.cs)$/i.test(block.language);
-                  const displayLabel = isFileName ? block.language : (block.language || 'code').toUpperCase();
                   const isHighlighted = highlightedCodeId === block.id;
                   
                   return (
@@ -622,16 +600,16 @@ export default function UnrealEngine() {
                     </div>
                   );
                 })}
-              </div>
-            ) : (
+                </div>
+              ) : (
               <div className="text-center text-gray-400 py-8">
                 <Code className="w-12 h-12 mx-auto mb-3 opacity-30" />
                 <p className="text-sm">No code examples in this section</p>
-              </div>
-            )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
       {/* Image Modal */}
       {modalImage && (
@@ -712,7 +690,7 @@ export default function UnrealEngine() {
           {/* Instructions */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 bg-dark-surface/90 backdrop-blur-sm rounded-lg px-4 py-2 text-sm text-gray-400 border border-dark-border">
             <p>Click outside or press ESC to close • Scroll with Ctrl/Cmd to zoom • Drag when zoomed</p>
-          </div>
+      </div>
         </div>
       )}
     </div>

@@ -41,14 +41,6 @@ const ResponsiveTesterPage = () => {
   }, [devicePreset, customWidth, customHeight]);
 
   const generateBreakpointCode = (lang: CodeLanguage): string => {
-    const breakpoints = [
-      { name: 'sm', value: 640 },
-      { name: 'md', value: 768 },
-      { name: 'lg', value: 1024 },
-      { name: 'xl', value: 1280 },
-      { name: '2xl', value: 1536 },
-    ];
-
     if (lang === 'css') {
       return `/* Mobile First Approach */
 /* Base styles (mobile) */
