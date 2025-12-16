@@ -275,31 +275,35 @@ export default function UnrealEngine() {
   }, [isResizingSidebar, isResizingCode]);
 
   return (
-    <div className="min-h-screen bg-dark-bg text-white py-8">
+    <div className="min-h-screen bg-dark-bg text-white py-6 sm:py-8">
       <style>{`
         /* Custom thin, semi-transparent scrollbar for vertical scrolling */
         #code-examples-container::-webkit-scrollbar,
         #code-examples-container-mobile::-webkit-scrollbar,
-        .sidebar-dropdown-container .max-h-64::-webkit-scrollbar {
+        .sidebar-dropdown-container .max-h-64::-webkit-scrollbar,
+        .unreal-sidebar-scroll::-webkit-scrollbar {
           width: 6px;
         }
         
         #code-examples-container::-webkit-scrollbar-track,
         #code-examples-container-mobile::-webkit-scrollbar-track,
-        .sidebar-dropdown-container .max-h-64::-webkit-scrollbar-track {
+        .sidebar-dropdown-container .max-h-64::-webkit-scrollbar-track,
+        .unreal-sidebar-scroll::-webkit-scrollbar-track {
           background: transparent;
         }
         
         #code-examples-container::-webkit-scrollbar-thumb,
         #code-examples-container-mobile::-webkit-scrollbar-thumb,
-        .sidebar-dropdown-container .max-h-64::-webkit-scrollbar-thumb {
+        .sidebar-dropdown-container .max-h-64::-webkit-scrollbar-thumb,
+        .unreal-sidebar-scroll::-webkit-scrollbar-thumb {
           background: rgba(148, 163, 184, 0.3);
           border-radius: 3px;
         }
         
         #code-examples-container::-webkit-scrollbar-thumb:hover,
         #code-examples-container-mobile::-webkit-scrollbar-thumb:hover,
-        .sidebar-dropdown-container .max-h-64::-webkit-scrollbar-thumb:hover {
+        .sidebar-dropdown-container .max-h-64::-webkit-scrollbar-thumb:hover,
+        .unreal-sidebar-scroll::-webkit-scrollbar-thumb:hover {
           background: rgba(148, 163, 184, 0.5);
         }
         
@@ -324,7 +328,8 @@ export default function UnrealEngine() {
         /* Firefox scrollbar */
         #code-examples-container,
         #code-examples-container-mobile,
-        .sidebar-dropdown-container .max-h-64 {
+        .sidebar-dropdown-container .max-h-64,
+        .unreal-sidebar-scroll {
           scrollbar-width: thin;
           scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
         }
@@ -336,12 +341,12 @@ export default function UnrealEngine() {
       `}</style>
       <div ref={containerRef} className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <BookOpen className="w-8 h-8 text-blue-400" />
-            <h1 className="text-3xl font-bold">Unreal Engine Documentation</h1>
+            <BookOpen className="w-7 h-7 sm:w-8 sm:h-8 text-blue-400" />
+            <h1 className="text-2xl sm:text-3xl font-bold">Unreal Engine Documentation</h1>
           </div>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-400 text-sm sm:text-base md:text-lg">
             Start with Project Organization, then follow the guides in order
           </p>
         </div>
@@ -353,9 +358,9 @@ export default function UnrealEngine() {
             className="flex-shrink-0"
             style={{ width: `${sidebarWidth}%` }}
           >
-            <div className="bg-dark-surface border border-dark-border rounded-lg p-6 sticky top-20 h-fit">
-              <h2 className="text-xl font-semibold mb-4">Getting Started</h2>
-              <div className="space-y-2">
+            <div className="bg-dark-surface border border-dark-border rounded-lg p-5 lg:p-6 sticky top-20 h-fit">
+              <h2 className="text-lg lg:text-xl font-semibold mb-3 lg:mb-4">Getting Started</h2>
+              <div className="space-y-2 unreal-sidebar-scroll max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
                 {docs.map((doc, index) => {
                   const isSelected = selectedDoc?.id === doc.id;
                   const isDropdownOpen = openDropdown === doc.id;
@@ -371,7 +376,7 @@ export default function UnrealEngine() {
                             loadDocument(doc);
                           }
                         }}
-                        className={`w-full text-left p-4 rounded-lg border transition-all ${
+                        className={`w-full text-left px-3 py-3 lg:p-4 rounded-lg border transition-all ${
                           isSelected
                             ? 'bg-blue-500/20 border-blue-500 text-white'
                             : 'bg-dark-bg border-dark-border text-gray-300 hover:border-blue-500/50 hover:text-white'
@@ -432,7 +437,7 @@ export default function UnrealEngine() {
 
           {/* Middle Column - Content */}
           <div className="flex-1 min-w-0">
-            <div className="bg-dark-surface border border-dark-border rounded-lg p-8 min-h-[600px]">
+            <div className="bg-dark-surface border border-dark-border rounded-lg p-5 lg:p-8 min-h-[500px] lg:min-h-[600px]">
               {loading ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
@@ -467,8 +472,8 @@ export default function UnrealEngine() {
             className="flex-shrink-0"
             style={{ width: `${codeWidth}%` }}
           >
-            <div className="bg-dark-surface border border-dark-border rounded-lg p-6 sticky top-20 h-fit max-h-[calc(100vh-120px)]">
-              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <div className="bg-dark-surface border border-dark-border rounded-lg p-5 lg:p-6 sticky top-20 h-fit max-h-[calc(100vh-120px)]">
+              <h2 className="text-base lg:text-lg font-semibold mb-3 lg:mb-4 flex items-center gap-2">
                 <Code className="w-5 h-5 text-blue-400" />
                 Code Examples
               </h2>
@@ -515,16 +520,16 @@ export default function UnrealEngine() {
         </div>
 
         {/* Mobile/Tablet Layout (fallback) */}
-        <div className="lg:hidden space-y-6">
+        <div className="lg:hidden space-y-5">
           {/* Navigation Sidebar */}
-          <div className="bg-dark-surface border border-dark-border rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">Getting Started</h2>
+          <div className="bg-dark-surface border border-dark-border rounded-lg p-5">
+            <h2 className="text-lg font-semibold mb-3">Getting Started</h2>
             <div className="space-y-2">
               {docs.map((doc, index) => (
                   <button
                     key={doc.id}
                     onClick={() => loadDocument(doc)}
-                    className={`w-full text-left p-4 rounded-lg border transition-all ${
+                    className={`w-full text-left px-3 py-3 rounded-lg border transition-all ${
                       selectedDoc?.id === doc.id
                         ? 'bg-blue-500/20 border-blue-500 text-white'
                         : 'bg-dark-bg border-dark-border text-gray-300 hover:border-blue-500/50 hover:text-white'
@@ -545,7 +550,7 @@ export default function UnrealEngine() {
           </div>
 
           {/* Content */}
-            <div className="bg-dark-surface border border-dark-border rounded-lg p-8 min-h-[600px]">
+            <div className="bg-dark-surface border border-dark-border rounded-lg p-5 min-h-[400px]">
             {loading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
@@ -564,8 +569,8 @@ export default function UnrealEngine() {
           </div>
 
           {/* Code Blocks */}
-          <div className="bg-dark-surface border border-dark-border rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <div className="bg-dark-surface border border-dark-border rounded-lg p-5">
+            <h2 className="text-base font-semibold mb-3 flex items-center gap-2">
               <Code className="w-5 h-5 text-blue-400" />
               Code Examples
             </h2>

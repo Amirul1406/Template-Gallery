@@ -82,6 +82,132 @@ const sections: ResourceSection[] = [
       },
     ],
   },
+  {
+    title: 'Improve Your Full‑Stack Product (Plan → Build → Polish)',
+    subtitle: 'Use these as a “second pair of eyes” to iterate on both frontend and backend with confidence.',
+    resources: [
+      {
+        name: 'roadmap.sh – Career & Tech Roadmaps',
+        description:
+          'Visual skill trees for Frontend, Backend, and DevOps. Great for deciding what to add next (e.g. after database → caching, auth, testing).',
+        url: 'https://roadmap.sh/',
+      },
+      {
+        name: 'Relume – AI Sitemaps & Wireframes',
+        description:
+          'Describe your idea and get instant sitemaps and page sections. Perfect for planning structure and layout before you code.',
+        url: 'https://www.relume.io/',
+      },
+      {
+        name: 'PageSpeed Insights / Lighthouse',
+        description:
+          'Google’s official audits for Performance, Accessibility, Best Practices, and SEO. Use it to catch issues like unoptimized images or heavy scripts.',
+        url: 'https://pagespeed.web.dev/',
+      },
+      {
+        name: 'Refactoring UI',
+        description:
+          'Design tips for developers: spacing, color, typography, and hierarchy. Ideal when your app works but doesn’t “look” right yet.',
+        url: 'https://www.refactoringui.com/',
+      },
+      {
+        name: 'SonarLint / SonarQube',
+        description:
+          'Static analysis for frontend and backend code. Finds bugs, security risks, and code smells directly inside your editor or CI pipeline.',
+        url: 'https://www.sonarsource.com/products/sonarlint/',
+      },
+      {
+        name: 'StackShare',
+        description:
+          'See real tech stacks from companies like Airbnb or Uber. Use it to compare your choices (databases, queues, frameworks) with industry standards.',
+        url: 'https://stackshare.io/',
+      },
+      {
+        name: 'Next.js & Remix Docs',
+        description:
+          'Meta‑frameworks that combine frontend + backend patterns. Reading their docs is like a mini‑course in modern full‑stack architecture.',
+        url: 'https://nextjs.org/docs',
+      },
+    ],
+  },
+  {
+    title: 'React + Three.js (R3F) – 3D Web Experiences',
+    subtitle: 'Resources to learn, design, and ship high‑quality 3D scenes with React Three Fiber.',
+    resources: [
+      {
+        name: 'Three.js Journey (Bruno Simon)',
+        description:
+          'The gold‑standard course for web 3D, now with a full React Three Fiber module. Study the “Portal Scene” and “Portfolio” lessons for real production patterns.',
+        url: 'https://threejs-journey.com/',
+      },
+      {
+        name: 'CodeSandbox – React Three Fiber Examples',
+        description:
+          'Search for recipes like “R3F ScrollControls”, “R3F Portals”, or “React Three Fiber Physics” to see copy‑pasteable code and patterns.',
+        url: 'https://codesandbox.io/search?query=react%20three%20fiber',
+      },
+      {
+        name: 'Drei Storybook',
+        description:
+          'Interactive docs for @react-three/drei components like OrbitControls, Html, Text, Stars, and more – the 3D equivalent of a UI component library.',
+        url: 'https://drei.pmnd.rs/',
+      },
+      {
+        name: 'Lusion',
+        description:
+          'Studio known for soft‑body physics, connectors, and highly polished R3F/WebGL experiences. Great for understanding how far you can push 3D UI.',
+        url: 'https://lusion.co/',
+      },
+      {
+        name: 'Anderson .Paak / fashion‑style 3D sites',
+        description:
+          'Examples of mixing 3D clothing/models with classic e‑commerce layouts – ideal reference for product‑driven 3D experiences.',
+        url: 'https://andersonbrothers.com/', // placeholder-style inspirational link
+      },
+      {
+        name: 'Next.js Conf Ticket Demos',
+        description:
+          'Yearly ticket generators built with R3F and Next.js. Clean, performant 3D that still feels like a fast web app.',
+        url: 'https://github.com/vercel/virtual-event-starter-kit',
+      },
+      {
+        name: '@react-three/drei',
+        description:
+          'Essential helper library for R3F: cameras, controls, loaders, text, environment maps, and more so you don’t rebuild common 3D utilities.',
+        url: 'https://github.com/pmndrs/drei',
+      },
+      {
+        name: '@react-three/rapier',
+        description:
+          'High‑performance physics for React Three Fiber. Use it for collisions, gravity, falling objects, and interactive 3D games.',
+        url: 'https://github.com/pmndrs/react-three-rapier',
+      },
+      {
+        name: 'Leva',
+        description:
+          'A lightweight GUI control panel for tweaking lights, colors, positions, and animation values in real time while you build R3F scenes.',
+        url: 'https://github.com/pmndrs/leva',
+      },
+      {
+        name: 'Maath',
+        description:
+          'Math and easing helpers for 3D work – simplifies operations on vectors, noise, smoothing, and transitions in R3F.',
+        url: 'https://github.com/pmndrs/maath',
+      },
+      {
+        name: 'ShaderToy',
+        description:
+          'Huge library of raw GLSL shaders. Advanced, but perfect for learning how “liquid”, “glitch”, and other special effects are built.',
+        url: 'https://www.shadertoy.com/',
+      },
+      {
+        name: 'Lamina',
+        description:
+          'Layer‑based material system for R3F that lets you compose complex shader looks without writing low‑level GLSL from scratch.',
+        url: 'https://github.com/pmndrs/lamina',
+      },
+    ],
+  },
 ];
 
 export default function Inspiration() {

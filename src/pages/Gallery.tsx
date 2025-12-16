@@ -27,23 +27,25 @@ export default function Gallery() {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4">Component Library</h1>
-          <p className="text-gray-400 text-lg">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4">
+            Component Library
+          </h1>
+          <p className="text-gray-400 text-sm sm:text-base md:text-lg">
             Browse and copy beautiful UI components for your projects
           </p>
         </div>
 
         {/* Category Filter */}
-        <div className="mb-8">
-          <div className="flex flex-wrap gap-2">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex-shrink-0 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                   selectedCategory === category
                     ? 'bg-blue-600 text-white'
                     : 'bg-dark-surface border border-dark-border text-gray-300 hover:bg-dark-border'
@@ -57,7 +59,7 @@ export default function Gallery() {
 
         {/* Component Grid */}
         {filteredComponents.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredComponents.map((component) => (
               <ComponentCard key={component.id} component={component} />
             ))}
