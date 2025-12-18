@@ -251,10 +251,6 @@ Use a Canvas Panel (default root). Add:
      - You'll see a **purple function entry node** on the left with:
        - A white execution pin (arrow) on the right
        - A green **"Distance"** output pin (this is the input you just added)
-   - **Add "Update Camera Distance" function call:**
-     - From the **function entry node's execution pin** (white arrow on the right), **drag** → search **"Update Camera Distance"** → select it
-     - **Note:** "Update Camera Distance" is a function that retrieves/calculates the current camera distance (this may be a custom function you've created or a built-in function)
-     - The "Update Camera Distance" node should appear (blue node)
    - **To create the "SET Camera Distance" node:**
      - In the **left panel** (My Blueprint), find the **Variables** section
      - Find the **"Camera Distance"** variable (the Float variable you created in step 3.1)
@@ -262,28 +258,49 @@ Use a Canvas Panel (default root). Add:
      - A menu will appear → select **"SET Camera Distance"** (or just **"Set"**)
      - This creates a white/green SET node for the Camera Distance variable
    - **Connect the nodes:**
-     - From **"Update Camera Distance"** execution output (white arrow on the right), **drag** → connect to **"SET Camera Distance"** execution input (white arrow on the left)
-     - From **"Update Camera Distance"** `Distance` output pin (green), **drag** → connect to **"SET Camera Distance"** `Camera Distance` input pin (green)
+     - Connect the **white execution pin** from the function entry node directly to the **SET Camera Distance** node.
+     - Connect the green **"Distance"** input pin from the function entry node to the green **"Camera Distance"** input pin on the SET node.
      - **Compile** the function
 
 **Visual Reference:**
 
-![UpdateCameraDistance function showing Update Camera Distance call node connected to SET Camera Distance node](/assets/unreal-engine/LiveData.png)
+![UpdateCameraDistance function showing SET Camera Distance node connected to function input](/assets/unreal-engine/LiveData.png)
 
-*This screenshot shows the correct Blueprint graph for the `UpdateCameraDistance` function. Notice how "Update Camera Distance" (blue call node) outputs a Distance value that is then stored in the "Camera Distance" variable using the SET node.*
+*This screenshot shows the correct Blueprint graph for the `UpdateCameraDistance` function. Notice how the function simply takes an input and saves it to a variable.*
 
-The function graph should look like this:
-```
-[Function Entry] → [Update Camera Distance] → [SET Camera Distance]
-                      ↓ (Distance output)
-                      └─────────────────────→ (Camera Distance input)
-```
+---
 
-**Important Notes:**
-- **"SET Camera Distance"** is created by dragging the **"Camera Distance"** variable from the Variables panel, not by searching
-- If you don't have an "Update Camera Distance" function available, you can:
-  - **Option 1:** Connect the `Distance` input directly to "SET Camera Distance" (simpler, if you're passing the distance value from outside)
-  - **Option 2:** Create a separate function that calculates/retrieves the camera distance from your Orbit Camera system
+### 3.3 Wiring Live Data (The Event Graph)
+
+To make the data update every frame, you need to call your function inside the **Event Tick** of `WBP_ShowroomHUD`.
+
+**The Wiring Logic:**
+
+1. **Event Tick (White Pin)**: Connects to **Cast To BP_OrbitCamera (White Pin)**.
+2. **Get Player Pawn**: This is a "Pure" node (green). It has **NO** white execution pins. You do **NOT** connect Event Tick to it.
+3. **Get Player Pawn (Return Value)**: Connect this blue pin to the **Object** pin of the Cast node.
+4. **As BP Orbit Camera (Blue Pin)**: Drag from here to get the **Spring Arm** component.
+5. **Spring Arm (Blue Pin)**: Drag from here and search for **"Get Target Arm Length"**.
+6. **Get Target Arm Length (Return Value)**: Connect this green float pin to your **UpdateCameraDistance** function's input.
+
+**Why can't I connect Event Tick to Get Player Pawn?**
+Because `Get Player Pawn` is a "Pure" node. It just provides data when asked. It doesn't "execute" anything, so it doesn't need an execution arrow (white pin). Only nodes that "do something" (like Casting, Printing, or Setting variables) have white execution pins.
+
+**The final chain should look like this:**
+`Event Tick` → `Cast To BP_OrbitCamera` (Object = `Get Player Pawn`) → `UpdateCameraDistance` (Distance = `Spring Arm` → `Target Arm Length`)
+
+### 3.4 – Binding the Variable to the UI (Displaying the Data)
+
+Even if the variable is updating in the background, you won't see it on screen until you **bind** it to a Text Block.
+
+1. **Open `WBP_ShowroomHUD`** → click the **Designer** tab.
+2. **Select the Text Block** where you want to show the distance.
+3. In the **Details panel** (right side), find the **Content** section.
+4. Next to the **Text** field, click the **"Bind"** button (dropdown).
+5. Select the **`CameraDistance`** variable from the list.
+6. **Compile and Save.**
+
+*Now, Unreal will automatically convert that float number into text and display it every frame!*
 
 ✅ **HUD ready to show live info.**
 

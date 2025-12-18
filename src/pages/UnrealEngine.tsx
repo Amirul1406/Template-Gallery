@@ -546,8 +546,8 @@ export default function UnrealEngine() {
                     </div>
                   </button>
                 ))}
+              </div>
             </div>
-          </div>
 
           {/* Content */}
             <div className="bg-dark-surface border border-dark-border rounded-lg p-5 min-h-[400px]">
@@ -558,7 +558,7 @@ export default function UnrealEngine() {
             ) : parsedContent.textContent.length > 0 ? (
               <div className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-gray-300 prose-strong:text-white prose-code:text-blue-400 prose-pre:bg-dark-bg prose-pre:border prose-pre:border-dark-border prose-pre:hidden">
                 {parsedContent.textContent}
-              </div>
+          </div>
             ) : (
                 <div className="flex flex-col items-center justify-center h-full text-center text-gray-400">
                   <BookOpen className="w-16 h-16 mb-4 opacity-50" />

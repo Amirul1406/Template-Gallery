@@ -81,8 +81,14 @@ export default function Navbar() {
     setSearchQuery(e.target.value);
   };
 
-  const handleLogoClick = () => {
-    // Reset search when clicking UI Library logo
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // If we're already on the home page, prevent navigation and just scroll to top
+    if (location.pathname === '/') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Reset search and close mobile menu
     setSearchQuery('');
     setIsSearchOpen(false);
     setSearchParams({});
@@ -91,60 +97,60 @@ export default function Navbar() {
 
   const navLinks = (
     <>
+            <Link
+              to="/"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/' ? 'text-white' : 'text-gray-400 hover:text-white'
+              }`}
+        onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Components
+            </Link>
+            <Link
+              to="/colors"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/colors' ? 'text-white' : 'text-gray-400 hover:text-white'
+              }`}
+        onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Colors
+            </Link>
+            <Link
+              to="/layouts"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/layouts' ? 'text-white' : 'text-gray-400 hover:text-white'
+              }`}
+        onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Layouts
+            </Link>
+            <Link
+              to="/responsive"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/responsive' ? 'text-white' : 'text-gray-400 hover:text-white'
+              }`}
+        onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Responsive
+            </Link>
       <Link
-        to="/"
+        to="/library"
         className={`text-sm font-medium transition-colors ${
-          location.pathname === '/' ? 'text-white' : 'text-gray-400 hover:text-white'
+          location.pathname === '/library' ? 'text-white' : 'text-gray-400 hover:text-white'
         }`}
         onClick={() => setIsMobileMenuOpen(false)}
       >
-        Components
+        Library
       </Link>
-      <Link
-        to="/colors"
-        className={`text-sm font-medium transition-colors ${
-          location.pathname === '/colors' ? 'text-white' : 'text-gray-400 hover:text-white'
-        }`}
+            <Link
+              to="/unreal-engine"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/unreal-engine' ? 'text-white' : 'text-gray-400 hover:text-white'
+              }`}
         onClick={() => setIsMobileMenuOpen(false)}
-      >
-        Colors
-      </Link>
-      <Link
-        to="/layouts"
-        className={`text-sm font-medium transition-colors ${
-          location.pathname === '/layouts' ? 'text-white' : 'text-gray-400 hover:text-white'
-        }`}
-        onClick={() => setIsMobileMenuOpen(false)}
-      >
-        Layouts
-      </Link>
-      <Link
-        to="/responsive"
-        className={`text-sm font-medium transition-colors ${
-          location.pathname === '/responsive' ? 'text-white' : 'text-gray-400 hover:text-white'
-        }`}
-        onClick={() => setIsMobileMenuOpen(false)}
-      >
-        Responsive
-      </Link>
-      <Link
-        to="/inspiration"
-        className={`text-sm font-medium transition-colors ${
-          location.pathname === '/inspiration' ? 'text-white' : 'text-gray-400 hover:text-white'
-        }`}
-        onClick={() => setIsMobileMenuOpen(false)}
-      >
-        Inspiration
-      </Link>
-      <Link
-        to="/unreal-engine"
-        className={`text-sm font-medium transition-colors ${
-          location.pathname === '/unreal-engine' ? 'text-white' : 'text-gray-400 hover:text-white'
-        }`}
-        onClick={() => setIsMobileMenuOpen(false)}
-      >
-        Unreal Engine
-      </Link>
+            >
+              Unreal Engine
+            </Link>
     </>
   );
 
